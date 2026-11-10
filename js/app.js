@@ -9,7 +9,7 @@
   // ---------- state ----------
   var state = load(KEY, {}) || {};
   state = Object.assign({ launchMs: DEFAULT_T0, hold: null, shipFollow: true, shipMs: null, site: 'gps', target: 'tower',
-    tempMode: 'live', tempManualF: 70, useWind: true, showMinor: false }, state);
+    tempMode: 'live', tempManualF: 70, useWind: true, showMinor: false, soundAlerts: true }, state);
   function save() { store(KEY, state); }
   function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
@@ -220,6 +220,7 @@
     } catch (e) { /* ignore */ }
   }
   function fire(e, test) {
+    if (!state.soundAlerts) return;
     $('flashTitle').textContent = test ? 'TEST ALERT' : e.label.toUpperCase();
     $('flashSub').textContent = test ? 'This is what a sound-arrival alert looks like.' : (e.see || '');
     $('flash').hidden = false;
@@ -233,7 +234,7 @@
     alertEvents().forEach(function (e) {
       var key = e.id + '@' + Math.round(e.at / 1000);
       var lead = (e.at - now) / 1000;
-      if (armed && e.soundFrom && lead > 0 && lead <= 3.05) { var k2 = key + ':' + Math.ceil(lead); if (!fired[k2]) { fired[k2] = 1; beep(1200, 0.08); } }
+      if (armed && state.soundAlerts && e.soundFrom && lead > 0 && lead <= 3.05) { var k2 = key + ':' + Math.ceil(lead); if (!fired[k2]) { fired[k2] = 1; beep(1200, 0.08); } }
       if (now >= e.at && now - e.at < 15000 && lastTick < e.at && !fired[key]) {
         fired[key] = 1; store(FIREDKEY, fired);
         if (armed) fire(e);
@@ -241,16 +242,29 @@
     });
     lastTick = now;
   }
-  function arm() {
-    try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) { audio = null; }
-    armed = true; beep(880, 0.12);
-    if (navigator.vibrate) navigator.vibrate(60);
-    if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; }).catch(function () {});
-    $('armBtn').textContent = 'ALERTS ARMED'; $('armBtn').classList.add('armed');
+  function renderArmInfo() {
+    if (!state.soundAlerts) {
+      $('armInfo').textContent = armed
+        ? 'Armed, but sound-arrival alerts are switched off, so nothing will fire until you turn them on.'
+        : 'Turn sound-arrival alerts on, then arm them. The phone needs to stay unlocked with this page open.';
+      return;
+    }
+    if (!armed) {
+      $('armInfo').textContent = 'Alerts are on. Arm them once, and the phone needs to stay unlocked with this page open.';
+      return;
+    }
     var vib = !!navigator.vibrate;
     $('armInfo').textContent = 'Armed: screen flash + beep' + (vib ? ' + vibration' : '') + (window.speechSynthesis ? ' + spoken call-out' : '') + '.' +
       (vib ? '' : ' This browser cannot vibrate (iPhone Safari does not support web vibration), so turn the volume up and watch for the flash.') +
       ('wakeLock' in navigator ? ' Screen kept awake.' : ' Keep the screen on yourself.');
+  }
+  function arm() {
+    try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) { audio = null; }
+    armed = true;
+    if (state.soundAlerts) { beep(880, 0.12); if (navigator.vibrate) navigator.vibrate(60); }
+    if ('wakeLock' in navigator) navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; }).catch(function () {});
+    $('armBtn').textContent = 'ALERTS ARMED'; $('armBtn').classList.add('armed');
+    renderArmInfo();
   }
   document.addEventListener('visibilitychange', function () {
     if (armed && document.visibilityState === 'visible' && 'wakeLock' in navigator && (!wakeLock || wakeLock.released)) navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; }).catch(function () {});
@@ -324,6 +338,11 @@
     $('shipFollow').checked = !!state.shipFollow; $('shipForm').hidden = !!state.shipFollow;
     $('showMinor').checked = !!state.showMinor; $('useWind').checked = !!state.useWind;
     $('tempMode').value = state.tempMode; $('tempManual').value = state.tempManualF;
+    document.querySelectorAll('#soundAlertSeg button').forEach(function (b) { b.classList.toggle('on', (b.dataset.sound === '1') === !!state.soundAlerts); });
+    $('soundAlertInfo').textContent = state.soundAlerts
+      ? 'On. Arm once, then liftoff sound and sonic-boom alerts flash the screen, beep, speak, and vibrate.'
+      : 'Off. No flash, tone, voice, or vibration for liftoff sound or sonic booms. Sound delays below still update.';
+    renderArmInfo();
     document.querySelectorAll('#siteSeg button').forEach(function (b) { b.classList.toggle('on', b.dataset.site === state.site); });
     document.querySelectorAll('#targetSeg button').forEach(function (b) { b.classList.toggle('on', b.dataset.target === state.target); });
     renderTimeline(); renderLook(); renderAlerts(Date.now());
@@ -368,8 +387,23 @@
     document.querySelectorAll('#siteSeg button').forEach(function (b) { b.onclick = function () { state.site = b.dataset.site; save(); evSig = ''; renderAll(); }; });
     document.querySelectorAll('#targetSeg button').forEach(function (b) { b.onclick = function () { state.target = b.dataset.target; save(); renderAll(); }; });
     $('compassBtn').onclick = enableCompass;
+    document.querySelectorAll('#soundAlertSeg button').forEach(function (b) {
+      b.onclick = function () {
+        state.soundAlerts = b.dataset.sound === '1';
+        save();
+        if (!state.soundAlerts) {
+          $('flash').hidden = true;
+          if (window.speechSynthesis) { try { speechSynthesis.cancel(); } catch (e) { /* ignore */ } }
+        }
+        renderAll();
+      };
+    });
     $('armBtn').onclick = arm;
-    $('testBtn').onclick = function () { if (!armed) arm(); fire({ label: 'Test', see: '' }, true); };
+    $('testBtn').onclick = function () {
+      if (!state.soundAlerts) { renderArmInfo(); return; }
+      if (!armed) arm();
+      fire({ label: 'Test', see: '' }, true);
+    };
     $('flashClose').onclick = function () { $('flash').hidden = true; };
     $('wxRefresh').onclick = fetchWx;
     var net = function () { var on = navigator.onLine; $('netStatus').textContent = on ? 'ONLINE' : 'OFFLINE'; $('netStatus').className = 'pill ' + (on ? 'on' : 'off'); if (on) fetchWx(); };

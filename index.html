@@ -109,9 +109,13 @@
   <!-- SOUND ALERTS -->
   <section id="alerts" class="panel">
     <h2>SOUND ARRIVAL</h2>
-    <p class="note">Light reaches you right away. Sound travels at about <b id="cNow">343 m/s</b>, so you see the rocket before you hear it. Alerts flash the screen, beep, and vibrate where the phone supports it.</p>
+    <p class="note">Light reaches you right away. Sound travels at about <b id="cNow">343 m/s</b>, so you see the rocket before you hear it. Alerts flash the screen, beep, speak, and vibrate where the phone supports it.</p>
+    <div class="seg" id="soundAlertSeg">
+      <button type="button" data-sound="1" class="on">ALERTS ON</button><button type="button" data-sound="0">ALERTS OFF</button>
+    </div>
+    <p class="note" id="soundAlertInfo">On. Arm once, then liftoff sound and sonic-boom alerts flash the screen, beep, speak, and vibrate.</p>
     <div class="btnrow"><button class="btn primary" id="armBtn">ARM ALERTS</button><button class="btn" id="testBtn">TEST ALERT</button></div>
-    <div class="note" id="armInfo">Alerts are off. Arm them once, and the phone needs to stay unlocked with this page open.</div>
+    <div class="note" id="armInfo">Alerts are on. Arm them once, and the phone needs to stay unlocked with this page open.</div>
     <div class="row2">
       <label>Air temperature for sound speed
         <select id="tempMode"><option value="live">Live weather</option><option value="manual">Manual</option></select></label>
