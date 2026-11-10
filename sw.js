@@ -1,5 +1,5 @@
 /* Offline support: cache the app shell, keep the last weather response. */
-var VERSION = 'sbla-v1';
+var VERSION = 'sbla-v2';
 var SHELL = ['./', 'index.html', 'css/style.css', 'js/data.js', 'js/geo.js', 'js/app.js', 'manifest.webmanifest',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png'];
 
