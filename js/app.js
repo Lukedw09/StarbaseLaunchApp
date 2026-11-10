@@ -122,14 +122,25 @@
   }
 
   // ---------- where to look ----------
+  function coord(lat, lon) { return lat.toFixed(5) + ', ' + lon.toFixed(5); }
   function renderLook() {
     var o = observer(), g = geom(state.target), now = new Date();
-    var info;
-    if (state.site === 'gps') {
-      if (gps) info = (gpsLive ? 'LIVE GPS' : 'LAST GPS FIX (' + G.ctTime(gps.at) + ')') + ' · ' + gps.lat.toFixed(5) + ', ' + gps.lon.toFixed(5) + ' · ±' + Math.round(gps.acc || 0) + ' m';
-      else info = (gpsError ? 'GPS unavailable (' + gpsError + '). ' : 'Waiting for GPS… ') + 'Showing Rocket Ranch Outpost until a fix arrives.';
-    } else info = 'PRESET · ' + o.name + ' · ' + o.lat.toFixed(5) + ', ' + o.lon.toFixed(5);
-    $('posInfo').textContent = info;
+    var source, meta;
+    if (state.site === 'gps' && gps) {
+      source = gpsLive ? 'Live GPS' : 'Last GPS fix';
+      meta = coord(gps.lat, gps.lon);
+      if (isFinite(gps.acc)) meta += ' \u00b1' + Math.round(gps.acc) + ' m';
+      if (!gpsLive) meta += ' \u00b7 ' + G.ctTime(gps.at);
+    } else if (state.site === 'gps') {
+      source = 'Live GPS';
+      meta = (gpsError ? 'GPS unavailable (' + gpsError + '). ' : 'Waiting for a fix. ') + 'Showing ' + P.outpost.name + ' until then. ' + coord(o.lat, o.lon);
+    } else {
+      source = o.name;
+      meta = coord(o.lat, o.lon);
+    }
+    $('locSource').textContent = source;
+    $('locMeta').textContent = meta;
+    $('targetName').textContent = P[state.target].name;
     $('brg').textContent = deg(g.brg) + ' ' + G.compassPoint(g.brg);
     $('dist').innerHTML = km(g.dist) + '<div class="note" style="margin:2px 0 0">' + mi(g.dist) + '</div>';
     $('delay').innerHTML = g.delay.toFixed(1) + ' s<div class="note" style="margin:2px 0 0">' + g.speed.toFixed(0) + ' m/s</div>';
@@ -321,6 +332,8 @@
   // ---------- main render ----------
   function renderStatic() {
     $('missionVeh').textContent = M.vehicles + ' · ' + M.pad;
+    if ($('catchNote')) $('catchNote').textContent = M.catchNote;
+    if ($('shipPadNote')) $('shipPadNote').textContent = M.catchNote;
     var src = '<b>Sources:</b> ';
     src += Object.keys(D.SOURCES).map(function (k) { var s = D.SOURCES[k]; return '<a href="' + s.url + '" target="_blank" rel="noopener">' + esc(s.name) + '</a>'; }).join(' · ');
     $('srcList').innerHTML = src;

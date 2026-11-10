@@ -13,7 +13,9 @@
     camp: { name: 'Campendium: Rocket Ranch Boca Chica', url: 'https://maps.campendium.com/us/brownsville-tx/camping-rv/rocket-ranch-boca-chica' },
     nominatim: { name: 'OpenStreetMap Nominatim: Port Isabel, TX', url: 'https://nominatim.openstreetmap.org/search?q=Port+Isabel,+Texas&format=json' },
     krgv: { name: 'KRGV: sonic booms possible during both returns', url: 'https://www.krgv.com/news/spacex-sets-target-date-for-15th-starship-launch-at-starbase' },
-    meteo: { name: 'Open-Meteo forecast API', url: 'https://open-meteo.com/' }
+    meteo: { name: 'Open-Meteo forecast API', url: 'https://open-meteo.com/' },
+    catchUpd: { name: 'SpaceX: first planned Starship catch, tower at Pad 2', url: 'https://www.spacex.com/updates/starship-catch' },
+    flight11: { name: 'SpaceX: Flight 11, final launch from the previous Pad 1 configuration', url: 'https://www.spacex.com/launches/starship-flight-11' }
   };
 
   var MISSION = {
@@ -24,14 +26,18 @@
     launchUtcDefault: '2026-11-13T22:45:00Z',
     windowMinutes: 75,
     status: 'NET · pending FAA approval · unconfirmed',
-    shipCatchOffsetSec: 22 * 3600 + 32 * 60 + 34 // T+22:32:34 (SpaceX timeline)
+    shipCatchOffsetSec: 22 * 3600 + 32 * 60 + 34, // T+22:32:34 (SpaceX timeline)
+    // Flight 15 timeline: booster "landing burn shutdown and catch" at 00:06:35, ship at 22:32:34.
+    // Both are a return to the launch site. The catch update sends the ship to the tower at Pad 2.
+    // Flight 11 was the final launch from Pad 1's previous configuration; that pad is under reconstruction.
+    catchNote: 'Both the booster catch (about T+6:35) and the ship catch (T+22:32:34) are at the same Pad 2 tower. Pad 1 is under reconstruction.'
   };
 
   // Places. kind: 'target' (things to look at) or 'site' (where you stand).
   var PLACES = {
     pad:   { id: 'pad',   name: 'Launch mount (Pad 2)', short: 'MOUNT', lat: 25.996603, lon: -97.158251, heightM: 0, src: 'll2' },
     tower: { id: 'tower', name: 'Catch tower (Pad 2)',  short: 'TOWER', lat: 25.99705,  lon: -97.15807,  heightM: 144.5, src: 'osm',
-             note: 'Tower stands about 50 m north of the mount. Position traced from OpenStreetMap, good to a few tens of metres.' },
+             note: 'Same tower for the booster catch and the ship catch. It stands about 50 m north of the mount. Position traced from OpenStreetMap, good to a few tens of metres.' },
     outpost:    { id: 'outpost',    name: 'Rocket Ranch Outpost (launch viewing)', lat: 25.96159,   lon: -97.20539,   src: 'visit' },
     campground: { id: 'campground', name: 'Rocket Ranch Campground (check-in)',    lat: 25.947229,  lon: -97.279813,  src: 'camp' },
     portisabel: { id: 'portisabel', name: 'Port Isabel (town centre)',             lat: 26.0734119, lon: -97.2085844, src: 'nominatim' }
@@ -77,7 +83,7 @@
     { id: 'blb', t: 370, anchor: 'launch', phase: 'Ascent & booster return', label: 'Booster landing burn start', kind: 'spacex', big: true,
       see: 'Look at the tower, low on the horizon. Engines relight as a bright light dropping onto the tower.' },
     { id: 'bcatch', t: 395, anchor: 'launch', phase: 'Ascent & booster return', label: 'BOOSTER CATCH', kind: 'spacex', big: true,
-      see: 'Landing burn shutdown and catch. The booster settles into the chopsticks.' },
+      see: 'Landing burn shutdown and catch by the Pad 2 tower chopsticks. The ship comes back to this same tower.' },
     { id: 'snd_bcatch', t: 370, anchor: 'launch', soundFrom: 'tower', phase: 'Ascent & booster return', label: 'Landing-burn sound arrives', kind: 'computed', alert: true,
       see: 'The landing-burn roar reaches you after you see it, so the catch looks quiet at first.' },
     { id: 'seco', t: 489, anchor: 'launch', phase: 'Ship to orbit', label: 'Starship engine cutoff', kind: 'spacex', webcast: true,
@@ -107,7 +113,7 @@
     { id: 's32', t: 81146 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Landing burn 3 → 2 engines', kind: 'spacex', minor: true, see: '' },
     { id: 's21', t: 81153 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Landing burn 2 → 1 engine', kind: 'spacex', minor: true, see: '' },
     { id: 'scatch', t: 0, anchor: 'ship', phase: 'Ship return & catch', label: 'SHIP CATCH', kind: 'spacex', big: true,
-      see: 'Landing burn shutdown and catch. The first Starship ever caught, if all goes to plan.' },
+      see: 'Landing burn shutdown and catch at the same Pad 2 tower as the booster, if all goes to plan.' },
     { id: 'snd_scatch', t: 81136 - 81154, anchor: 'ship', soundFrom: 'tower', phase: 'Ship return & catch', label: 'Ship landing-burn sound arrives', kind: 'computed', alert: true,
       see: 'The roar of the ship landing burn arrives after you see it.' }
   ];

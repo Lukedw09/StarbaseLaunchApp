@@ -76,11 +76,22 @@
   <!-- WHERE TO LOOK -->
   <section id="look" class="panel">
     <h2>WHERE TO LOOK</h2>
+    <div class="callout" id="youBox">
+      <div class="k">YOUR LOCATION</div>
+      <div class="v" id="locSource">Live GPS</div>
+      <div class="meta" id="locMeta">Waiting for a fix…</div>
+    </div>
     <div class="seg" id="siteSeg">
       <button data-site="gps" class="on">LIVE GPS</button><button data-site="outpost">OUTPOST</button><button data-site="campground">CAMPGROUND</button><button data-site="portisabel">PORT ISABEL</button>
     </div>
-    <div class="note" id="posInfo">Waiting for location…</div>
+    <div class="callout" id="targetBox">
+      <div class="k">TARGET</div>
+      <div class="v" id="targetName">Catch tower (Pad 2)</div>
+      <div class="meta" id="targetExplain">Compass points from your location to the target.</div>
+    </div>
     <div class="seg small" id="targetSeg"><button data-target="tower" class="on">CATCH TOWER</button><button data-target="pad">LAUNCH MOUNT</button></div>
+    <p class="note" id="targetHelp">Mount = where Starship sits and lifts off. Tower = where the booster and ship are caught.</p>
+    <p class="note" id="catchNote"></p>
     <div class="compasswrap">
       <div class="dial" id="dial">
         <div class="rose" id="rose">
@@ -166,6 +177,7 @@
       <div class="btnrow"><button class="btn primary" type="submit">SET</button></div>
     </form>
     <p class="note">SpaceX will only bring the ship back if its systems are healthy. Otherwise it comes down in the ocean, so treat this as a planned catch, not a sure thing.</p>
+    <p class="note" id="shipPadNote"></p>
   </section>
 
   <footer class="foot">
