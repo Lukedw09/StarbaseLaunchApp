@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StarbaseLaunchApp · Starship Flight 15 launch-day companion</title>
+<meta name="description" content="Unofficial fan-made launch-day companion for Starship Flight 15 at Starbase, TX: countdown, event timeline, where to look, sound-arrival alerts and live weather. Works offline.">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Launch Day">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="flash" class="flash" hidden><div class="flash-inner"><div id="flashTitle" class="flash-title"></div><div id="flashSub" class="flash-sub"></div><button id="flashClose" class="btn">Dismiss</button></div></div>
+
+<header class="head">
+  <div class="topbar">
+    <div class="brand">STARBASE<span class="thin">LAUNCH</span></div>
+    <div class="topright"><span id="netStatus" class="pill">ONLINE</span><span class="pill fan">UNOFFICIAL FAN APP</span></div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <a href="#count" class="active">COUNT</a><a href="#timeline">TIMELINE</a><a href="#look">LOOK</a><a href="#alerts">SOUND</a><a href="#wx">WEATHER</a><a href="#ship">SHIP CATCH</a>
+  </nav>
+</header>
+
+<main>
+  <!-- COUNTDOWN -->
+  <section id="count" class="panel hero">
+    <div class="mission"><span id="missionName">STARSHIP FLIGHT 15</span> <span class="dim" id="missionVeh"></span></div>
+    <div class="status" id="launchStatus"></div>
+    <div class="clock" id="mainClock" aria-live="off">
+      <span class="t" id="clkT">T−</span>
+      <span class="grp"><span class="num" id="clkD">00</span><span class="lab">DAYS</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="clkH">00</span><span class="lab">HRS</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="clkM">00</span><span class="lab">MIN</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="clkS">00</span><span class="lab">SEC</span></span>
+    </div>
+    <div id="holdBanner" class="hold" hidden>HOLD · HOLD · HOLD</div>
+    <div class="readouts">
+      <div><div class="k">LAUNCH (T−0)</div><div class="v" id="launchLocal">—</div></div>
+      <div><div class="k">WINDOW CLOSES</div><div class="v" id="windowClose">—</div></div>
+      <div><div class="k">NOW</div><div class="v" id="nowLocal">—</div></div>
+    </div>
+    <div class="nowbar">
+      <div><div class="k">CURRENT</div><div class="v" id="curEvent">—</div></div>
+      <div><div class="k">NEXT</div><div class="v" id="nextEvent">—</div></div>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="holdBtn">HOLD</button>
+      <button class="btn" data-shift="60">+1 MIN</button>
+      <button class="btn" data-shift="300">+5 MIN</button>
+      <button class="btn" data-shift="900">+15 MIN</button>
+      <button class="btn" id="editBtn">EDIT T−0</button>
+    </div>
+    <form id="editForm" class="editform" hidden>
+      <label>Liftoff time (Central Time, America/Chicago)
+        <input type="datetime-local" id="launchInput" step="1" required></label>
+      <div class="btnrow"><button class="btn primary" type="submit">SET</button><button class="btn" type="button" id="resetLaunch">RESET TO SPACEX TARGET</button><button class="btn" type="button" id="cancelEdit">CANCEL</button></div>
+      <p class="note">Use this when SpaceX announces a new T−0, a slip, or a recycle. Saved on this phone.</p>
+    </form>
+  </section>
+
+  <!-- TIMELINE -->
+  <section id="timeline" class="panel">
+    <h2>EVENT TIMELINE</h2>
+    <p class="note">Times from SpaceX's Flight 15 timeline ("all times approximate"). <span class="tag computed">COMPUTED</span> rows use your distance. <span class="tag est">ESTIMATE</span> rows are not from SpaceX. Ship-return rows follow the ship-catch clock.</p>
+    <label class="check"><input type="checkbox" id="showMinor"> Show minor countdown steps</label>
+    <ol id="eventList" class="events"></ol>
+  </section>
+
+  <!-- WHERE TO LOOK -->
+  <section id="look" class="panel">
+    <h2>WHERE TO LOOK</h2>
+    <div class="seg" id="siteSeg">
+      <button data-site="gps" class="on">LIVE GPS</button><button data-site="outpost">OUTPOST</button><button data-site="campground">CAMPGROUND</button><button data-site="portisabel">PORT ISABEL</button>
+    </div>
+    <div class="note" id="posInfo">Waiting for location…</div>
+    <div class="seg small" id="targetSeg"><button data-target="tower" class="on">CATCH TOWER</button><button data-target="pad">LAUNCH MOUNT</button></div>
+    <div class="compasswrap">
+      <div class="dial" id="dial">
+        <div class="rose" id="rose">
+          <span class="cn n">N</span><span class="cn e">E</span><span class="cn s">S</span><span class="cn w">W</span>
+          <div class="ticks"></div>
+          <div class="sunwrap" id="sunMark"><div class="sun" title="Sun">☀</div></div>
+          <div class="arrow" id="arrow"><div class="head"></div><div class="shaft"></div></div>
+        </div>
+        <div class="heading-ind"></div>
+      </div>
+      <div class="turn" id="turnHint">—</div>
+    </div>
+    <div class="btnrow"><button class="btn primary" id="compassBtn">ENABLE COMPASS</button></div>
+    <div class="note" id="compassInfo">No compass yet. The dial shows north at the top. Tap Enable Compass to turn it with your phone.</div>
+    <div class="grid4">
+      <div><div class="k">BEARING</div><div class="v big" id="brg">—</div></div>
+      <div><div class="k">DISTANCE</div><div class="v big" id="dist">—</div></div>
+      <div><div class="k">SOUND DELAY</div><div class="v big" id="delay">—</div></div>
+      <div><div class="k">TOWER TOP</div><div class="v big" id="elev">—</div></div>
+    </div>
+    <div class="note" id="sunInfo"></div>
+    <table class="tbl" id="targetsTbl"><thead><tr><th>TARGET</th><th>BEARING</th><th>DIST</th><th>SOUND</th></tr></thead><tbody></tbody></table>
+    <p class="note" id="towerNote"></p>
+  </section>
+
+  <!-- SOUND ALERTS -->
+  <section id="alerts" class="panel">
+    <h2>SOUND ARRIVAL</h2>
+    <p class="note">Light reaches you right away. Sound travels at about <b id="cNow">343 m/s</b>, so you see the rocket before you hear it. Alerts flash the screen, beep, and vibrate where the phone supports it.</p>
+    <div class="btnrow"><button class="btn primary" id="armBtn">ARM ALERTS</button><button class="btn" id="testBtn">TEST ALERT</button></div>
+    <div class="note" id="armInfo">Alerts are off. Arm them once, and the phone needs to stay unlocked with this page open.</div>
+    <div class="row2">
+      <label>Air temperature for sound speed
+        <select id="tempMode"><option value="live">Live weather</option><option value="manual">Manual</option></select></label>
+      <label>Manual °F <input type="number" id="tempManual" value="70" step="1"></label>
+    </div>
+    <label class="check"><input type="checkbox" id="useWind" checked> Include wind along the sound path</label>
+    <ul id="alertList" class="alertlist"></ul>
+  </section>
+
+  <!-- WEATHER -->
+  <section id="wx" class="panel">
+    <h2>WEATHER AT STARBASE</h2>
+    <div class="note" id="wxStatus">Loading…</div>
+    <div class="grid4">
+      <div><div class="k">TEMP</div><div class="v big" id="wxTemp">—</div></div>
+      <div><div class="k">WIND</div><div class="v big" id="wxWind">—</div></div>
+      <div><div class="k">GUSTS</div><div class="v big" id="wxGust">—</div></div>
+      <div><div class="k">CLOUDS</div><div class="v big" id="wxCloud">—</div></div>
+      <div><div class="k">VISIBILITY</div><div class="v big" id="wxVis">—</div></div>
+      <div><div class="k">HUMIDITY</div><div class="v big" id="wxRh">—</div></div>
+      <div><div class="k">SKY</div><div class="v" id="wxSky">—</div></div>
+      <div><div class="k">SUNSET</div><div class="v" id="wxSunset">—</div></div>
+    </div>
+    <h3>FORECAST AT T−0 AND SHIP CATCH</h3>
+    <table class="tbl" id="wxFc"><thead><tr><th></th><th>TEMP</th><th>WIND</th><th>CLOUD</th><th>VIS</th></tr></thead><tbody></tbody></table>
+    <div class="btnrow"><button class="btn" id="wxRefresh">REFRESH</button></div>
+    <p class="note">Data: Open-Meteo, at the Pad 2 coordinates. This is not SpaceX's launch weather call.</p>
+  </section>
+
+  <!-- SHIP CATCH -->
+  <section id="ship" class="panel">
+    <h2>SHIP CATCH</h2>
+    <div class="status" id="shipStatus"></div>
+    <div class="clock small" id="shipClock">
+      <span class="t" id="sT">T−</span>
+      <span class="grp"><span class="num" id="sD">00</span><span class="lab">DAYS</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="sH">00</span><span class="lab">HRS</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="sM">00</span><span class="lab">MIN</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="sS">00</span><span class="lab">SEC</span></span>
+    </div>
+    <div class="readouts">
+      <div><div class="k">CATCH (EST.)</div><div class="v" id="shipLocal">—</div></div>
+      <div><div class="k">MISSION ELAPSED</div><div class="v" id="met">—</div></div>
+    </div>
+    <label class="check"><input type="checkbox" id="shipFollow" checked> Follow launch time (T+22:32:34 from SpaceX's timeline)</label>
+    <form id="shipForm" class="editform" hidden>
+      <label>Ship catch time (Central Time) <input type="datetime-local" id="shipInput" step="1"></label>
+      <div class="btnrow"><button class="btn primary" type="submit">SET</button></div>
+    </form>
+    <p class="note">SpaceX will only bring the ship back if its systems are healthy. Otherwise it comes down in the ocean, so treat this as a planned catch, not a sure thing.</p>
+  </section>
+
+  <footer class="foot">
+    <p><b>Unofficial fan app.</b> Not affiliated with, endorsed by, or connected to SpaceX or Rocket Ranch. Times are approximate and change often. Follow official SpaceX updates and on-site staff.</p>
+    <p id="srcList" class="note"></p>
+    <p class="note" id="swStatus"></p>
+  </footer>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/geo.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
