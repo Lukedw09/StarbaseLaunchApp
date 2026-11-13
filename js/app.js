@@ -341,7 +341,8 @@
   function renderAll() {
     var T0 = t0();
     var custom = state.launchMs !== DEFAULT_T0;
-    $('launchStatus').textContent = custom ? 'T−0 SET ON THIS PHONE · CHECK SPACEX FOR UPDATES' : 'NET ' + G.ctDay(DEFAULT_T0).toUpperCase() + ' · WINDOW OPENS ' + G.ctTime(DEFAULT_T0) + ' · UNCONFIRMED, PENDING FAA APPROVAL';
+    var faa = String(M.status || '').replace(/^NET · /, '');
+    $('launchStatus').textContent = custom ? 'T−0 SET ON THIS PHONE · CHECK SPACEX FOR UPDATES' : 'NET ' + G.ctDay(DEFAULT_T0).toUpperCase() + ' · WINDOW OPENS ' + G.ctTime(DEFAULT_T0) + ' · ' + faa;
     $('launchLocal').textContent = G.ctDay(T0) + ' ' + G.ctTime(T0, true);
     $('windowClose').textContent = G.ctTime(state.launchMs + M.windowMinutes * 60e3);
     $('holdBanner').hidden = !state.hold;
