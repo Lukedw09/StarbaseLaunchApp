@@ -15,7 +15,8 @@
     krgv: { name: 'KRGV: sonic booms possible during both returns', url: 'https://www.krgv.com/news/spacex-sets-target-date-for-15th-starship-launch-at-starbase' },
     meteo: { name: 'Open-Meteo forecast API', url: 'https://open-meteo.com/' },
     catchUpd: { name: 'SpaceX: first planned Starship catch, tower at Pad 2', url: 'https://www.spacex.com/updates/starship-catch' },
-    flight11: { name: 'SpaceX: Flight 11, final launch from the previous Pad 1 configuration', url: 'https://www.spacex.com/launches/starship-flight-11' }
+    flight11: { name: 'SpaceX: Flight 11, final launch from the previous Pad 1 configuration', url: 'https://www.spacex.com/launches/starship-flight-11' },
+    spacecom: { name: 'Space.com live blog: FAA license granted for Flight 15, Nov 13 2026', url: 'https://www.space.com/news/live/spacex-starship-flight-15-live-updates-nov-13-2026-starship-first-double-landing-attempt' }
   };
 
   var MISSION = {
@@ -25,7 +26,9 @@
     // Window opens 4:45 PM CST Fri Nov 13 2026 = 22:45 UTC (SpaceX page).
     launchUtcDefault: '2026-11-13T22:45:00Z',
     windowMinutes: 75,
-    status: 'NET · pending FAA approval · unconfirmed',
+    // SpaceX's own Flight 15 page still says pending regulatory approval.
+    // Space.com reported the FAA license on the afternoon of Fri Nov 13, 2026. Liftoff is still the 4:45 PM CT window.
+    status: 'NET · FAA license granted (per Space.com)',
     shipCatchOffsetSec: 22 * 3600 + 32 * 60 + 34, // T+22:32:34 (SpaceX timeline)
     // Flight 15 timeline: booster "landing burn shutdown and catch" at 00:06:35, ship at 22:32:34.
     // Both are a return to the launch site. The catch update sends the ship to the tower at Pad 2.
