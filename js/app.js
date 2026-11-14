@@ -11,6 +11,9 @@
   state = Object.assign({ launchMs: DEFAULT_T0, hold: null, shipFollow: true, shipMs: null, site: 'gps', target: 'tower',
     tempMode: 'live', tempManualF: 70, useWind: true, showMinor: false, soundAlerts: true }, state);
   function save() { store(KEY, state); }
+  // Phones that saved the planned 4:45 PM window open follow the actual 4:47 PM liftoff.
+  var PLANNED_OPEN = Date.parse('2026-11-13T22:45:00Z');
+  if (state.launchMs === PLANNED_OPEN && DEFAULT_T0 !== PLANNED_OPEN) { state.launchMs = DEFAULT_T0; save(); }
   function load(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* private mode */ } }
 
@@ -66,6 +69,7 @@
   function tLabel(ms) { return 'T' + G.fmtOffset((ms - t0()) / 1000); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function kindTag(e) {
+    if (e.aborted) return '<span class="tag abort">CALLED OFF</span>';
     if (e.kind === 'estimate') return '<span class="tag est">ESTIMATE</span>';
     if (e.kind === 'computed') return '<span class="tag computed">COMPUTED</span>';
     return e.webcast ? '<span class="tag">WEBCAST</span>' : '';
@@ -89,7 +93,7 @@
     evCache.forEach(function (e) {
       if (e.minor && !state.showMinor) return;
       if (e.phase !== phase) { phase = e.phase; html += '<li class="phase">' + esc(phase.toUpperCase()) + '</li>'; }
-      html += '<li class="ev' + (e.big ? ' big' : '') + '" data-id="' + e.id + '" data-at="' + e.at + '">' +
+      html += '<li class="ev' + (e.big ? ' big' : '') + (e.aborted ? ' abort' : '') + '" data-id="' + e.id + '" data-at="' + e.at + '">' +
         '<div><div class="tt">' + tLabel(e.at) + '</div><div class="ct">' + (Math.abs(e.at - t0()) > 6 * 3600e3 ? G.ctDay(e.at) + ' ' : '') + G.ctTime(e.at, true) + '</div></div>' +
         '<div><div class="lbl">' + esc(e.label) + kindTag(e) + '</div>' +
         (e.extra ? '<div class="see">' + esc(e.extra) + '.</div>' : '') +
@@ -211,7 +215,7 @@
   }
 
   // ---------- alerts ----------
-  function alertEvents() { return evCache.filter(function (e) { return e.alert; }); }
+  function alertEvents() { return evCache.filter(function (e) { return e.alert && !e.aborted; }); }
   function renderAlerts(now) {
     var html = '';
     alertEvents().forEach(function (e) {
@@ -341,13 +345,12 @@
   function renderAll() {
     var T0 = t0();
     var custom = state.launchMs !== DEFAULT_T0;
-    var faa = String(M.status || '').replace(/^NET · /, '');
-    $('launchStatus').textContent = custom ? 'T−0 SET ON THIS PHONE · CHECK SPACEX FOR UPDATES' : 'NET ' + G.ctDay(DEFAULT_T0).toUpperCase() + ' · WINDOW OPENS ' + G.ctTime(DEFAULT_T0) + ' · ' + faa;
+    $('launchStatus').textContent = custom ? 'T−0 SET ON THIS PHONE · CHECK SPACEX FOR UPDATES' : (M.launched ? M.status : 'NET ' + G.ctDay(DEFAULT_T0).toUpperCase() + ' · WINDOW OPENS ' + G.ctTime(DEFAULT_T0));
     $('launchLocal').textContent = G.ctDay(T0) + ' ' + G.ctTime(T0, true);
     $('windowClose').textContent = G.ctTime(state.launchMs + M.windowMinutes * 60e3);
     $('holdBanner').hidden = !state.hold;
     $('holdBtn').textContent = state.hold ? 'RESUME COUNT' : 'HOLD';
-    $('shipStatus').textContent = state.shipFollow ? 'ESTIMATE · T−0 + 22:32:34 FROM SPACEX TIMELINE · NEXT DAY' : 'SET ON THIS PHONE';
+    $('shipStatus').textContent = state.shipFollow ? 'STILL PLANNED · T+22:32:34 FROM THE 4:47 PM CST LIFTOFF · PAD 2 TOWER' : 'SET ON THIS PHONE';
     $('shipLocal').textContent = G.ctDay(shipT()) + ' ' + G.ctTime(shipT(), true);
     $('shipFollow').checked = !!state.shipFollow; $('shipForm').hidden = !!state.shipFollow;
     $('showMinor').checked = !!state.showMinor; $('useWind').checked = !!state.useWind;
