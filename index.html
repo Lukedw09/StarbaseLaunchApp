@@ -43,7 +43,7 @@
     <div id="holdBanner" class="hold" hidden>HOLD · HOLD · HOLD</div>
     <div class="readouts">
       <div><div class="k">LAUNCH (T−0)</div><div class="v" id="launchLocal">—</div></div>
-      <div><div class="k">WINDOW CLOSES</div><div class="v" id="windowClose">—</div></div>
+      <div><div class="k" id="windowLabel">WINDOW CLOSES</div><div class="v" id="windowClose">—</div></div>
       <div><div class="k">NOW</div><div class="v" id="nowLocal">—</div></div>
     </div>
     <div class="nowbar">
@@ -168,7 +168,7 @@
       <span class="grp"><span class="num" id="sS">00</span><span class="lab">SEC</span></span>
     </div>
     <div class="readouts">
-      <div><div class="k">CATCH (EST.)</div><div class="v" id="shipLocal">—</div></div>
+      <div><div class="k" id="shipWhenLabel">CATCH (EST.)</div><div class="v" id="shipLocal">—</div></div>
       <div><div class="k">MISSION ELAPSED</div><div class="v" id="met">—</div></div>
     </div>
     <label class="check"><input type="checkbox" id="shipFollow" checked> Follow launch time (T+22:32:34 from the 4:47 PM CST liftoff)</label>
@@ -176,7 +176,7 @@
       <label>Ship catch time (Central Time) <input type="datetime-local" id="shipInput" step="1"></label>
       <div class="btnrow"><button class="btn primary" type="submit">SET</button></div>
     </form>
-    <p class="note">SpaceX will only bring the ship back if its systems are healthy. Otherwise it comes down in the ocean, so treat this as a planned catch, not a sure thing.</p>
+    <p class="note">Ship 42 was caught. SpaceX only attempts the catch when the ship is healthy; otherwise it comes down in the ocean.</p>
     <p class="note" id="shipPadNote"></p>
   </section>
 

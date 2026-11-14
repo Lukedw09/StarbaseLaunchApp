@@ -114,8 +114,8 @@
     }
     var first = vis[0];
     $('curEvent').textContent = cur ? cur.label : (first ? 'Waiting for the countdown (starts ' + tLabel(first.at) + ')' : '—');
-    if (cur && cur.id === 'snd_scatch' && now - cur.at > 600e3) $('curEvent').textContent = 'Mission complete';
     $('nextEvent').textContent = next ? next.label + ' in ' + human((next.at - now) / 1000) : '—';
+    if (missionOver(now)) { $('curEvent').textContent = 'Mission complete'; $('nextEvent').textContent = 'Ship 42 caught'; }
   }
   function human(s) {
     s = Math.max(0, Math.round(s));
@@ -215,7 +215,8 @@
   }
 
   // ---------- alerts ----------
-  function alertEvents() { return evCache.filter(function (e) { return e.alert && !e.aborted; }); }
+  function missionOver(now) { return !!(M.complete && state.launchMs === DEFAULT_T0 && !state.hold && now >= shipT()); }
+  function alertEvents() { return evCache.filter(function (e) { return e.alert && !e.aborted && !(M.complete && e.anchor === 'ship'); }); }
   function renderAlerts(now) {
     var html = '';
     alertEvents().forEach(function (e) {
@@ -246,6 +247,7 @@
   }
   var lastTick = Date.now();
   function checkAlerts(now) {
+    if (missionOver(now)) { lastTick = now; return; }
     alertEvents().forEach(function (e) {
       var key = e.id + '@' + Math.round(e.at / 1000);
       var lead = (e.at - now) / 1000;
@@ -345,12 +347,15 @@
   function renderAll() {
     var T0 = t0();
     var custom = state.launchMs !== DEFAULT_T0;
-    $('launchStatus').textContent = custom ? 'T−0 SET ON THIS PHONE · CHECK SPACEX FOR UPDATES' : (M.launched ? M.status : 'NET ' + G.ctDay(DEFAULT_T0).toUpperCase() + ' · WINDOW OPENS ' + G.ctTime(DEFAULT_T0));
+    var over = missionOver(Date.now());
+    $('launchStatus').textContent = custom ? 'T−0 SET ON THIS PHONE · CHECK SPACEX FOR UPDATES' : (M.complete || M.launched ? M.status : 'NET ' + G.ctDay(DEFAULT_T0).toUpperCase() + ' · WINDOW OPENS ' + G.ctTime(DEFAULT_T0));
     $('launchLocal').textContent = G.ctDay(T0) + ' ' + G.ctTime(T0, true);
-    $('windowClose').textContent = G.ctTime(state.launchMs + M.windowMinutes * 60e3);
+    if ($('windowLabel')) $('windowLabel').textContent = over ? 'SHIP CAUGHT' : 'WINDOW CLOSES';
+    $('windowClose').textContent = over ? G.ctDay(shipT()) + ' ' + G.ctTime(shipT()) : G.ctTime(state.launchMs + M.windowMinutes * 60e3);
     $('holdBanner').hidden = !state.hold;
     $('holdBtn').textContent = state.hold ? 'RESUME COUNT' : 'HOLD';
-    $('shipStatus').textContent = state.shipFollow ? 'STILL PLANNED · T+22:32:34 FROM THE 4:47 PM CST LIFTOFF · PAD 2 TOWER' : 'SET ON THIS PHONE';
+    $('shipStatus').textContent = !state.shipFollow ? 'SET ON THIS PHONE' : (over ? 'CAUGHT · PAD 2 CHOPSTICKS · ABOUT 3:20 PM CST · FIRST STARSHIP UPPER-STAGE CATCH' : 'STILL PLANNED · T+22:32:34 FROM THE 4:47 PM CST LIFTOFF · PAD 2 TOWER');
+    if ($('shipWhenLabel')) $('shipWhenLabel').textContent = over ? 'CAUGHT' : 'CATCH (EST.)';
     $('shipLocal').textContent = G.ctDay(shipT()) + ' ' + G.ctTime(shipT(), true);
     $('shipFollow').checked = !!state.shipFollow; $('shipForm').hidden = !!state.shipFollow;
     $('showMinor').checked = !!state.showMinor; $('useWind').checked = !!state.useWind;
