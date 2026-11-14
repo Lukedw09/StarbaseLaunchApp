@@ -17,10 +17,13 @@
     catchUpd: { name: 'SpaceX: first planned Starship catch, tower at Pad 2', url: 'https://www.spacex.com/updates/starship-catch' },
     flight11: { name: 'SpaceX: Flight 11, final launch from the previous Pad 1 configuration', url: 'https://www.spacex.com/launches/starship-flight-11' },
     spacecom: { name: 'Space.com live blog: FAA license granted for Flight 15, Nov 13 2026', url: 'https://www.space.com/news/live/spacex-starship-flight-15-live-updates-nov-13-2026-starship-first-double-landing-attempt' },
-    spacecomFlight: { name: 'Space.com: Flight 15 liftoff 22:47 UTC, booster catch aborted, ship catch still planned', url: 'https://www.space.com/space-exploration/launches-spacecraft/spacex-starship-flight-15-chopsticks-double-catch-super-heavy-ship' },
+    spacecomFlight: { name: 'Space.com: Flight 15 liftoff 22:47 UTC and booster catch abort', url: 'https://www.space.com/space-exploration/launches-spacecraft/spacex-starship-flight-15-chopsticks-double-catch-super-heavy-ship' },
     nbc: { name: 'NBC News: Flight 15 launch, booster recovery aborted', url: 'https://www.nbcnews.com/science/space/spacex-launches-15th-starship-flight-aborts-booster-recovery-maneuver-rcna609274' },
-    krgvFlight: { name: 'KRGV: booster splashdown in the Gulf, ship catch still planned', url: 'https://www.krgv.com/news/spacex-approved-for-starships-15th-test-flight-at-boca-chica/' },
-    spacexPost: { name: 'SpaceX on X: Super Heavy has diverted to an offshore splashdown in the Gulf', url: 'https://x.com/SpaceX' }
+    krgvFlight: { name: 'KRGV: booster diverted to the Gulf', url: 'https://www.krgv.com/news/spacex-approved-for-starships-15th-test-flight-at-boca-chica/' },
+    spacexPost: { name: 'SpaceX on X: Super Heavy has diverted to an offshore splashdown in the Gulf', url: 'https://x.com/SpaceX' },
+    spacecomCatch: { name: 'Space.com live blog, Nov 14 2026: Ship 42 caught; booster lost on low-fuel-mass alarm', url: 'https://www.space.com/news/live/spacex-starship-flight-15-live-updates-nov-14-2026-starship-first-double-landing-attempt' },
+    cnbc: { name: 'CNBC: first catch of a Starship upper stage from orbit', url: 'https://www.cnbc.com/2026/11/14/spacex-plans-to-try-first-ever-catch-of-starship-rocket-from-orbit.html' },
+    bbc: { name: 'BBC live: SpaceX catches Ship 42 on its return', url: 'https://www.bbc.com/news/live/cq0k683l3dz3t' }
   };
 
   var MISSION = {
@@ -31,18 +34,19 @@
     launchUtcDefault: '2026-11-13T22:47:00Z',
     windowMinutes: 75,
     launched: true,
-    // Booster catch called off; B22 splashed down in the Gulf about 6.5 min after launch (SpaceX on X).
-    // Ship catch still planned at the Pad 2 tower, T+22:32:34 from this liftoff (about 22.5 h, ~3:17–3:20 PM CST Sat).
-    status: 'In flight · liftoff 4:47 PM CST · booster splashdown in the Gulf · ship catch still planned',
-    shipCatchOffsetSec: 22 * 3600 + 32 * 60 + 34, // T+22:32:34 from actual liftoff (SpaceX timeline)
-    catchNote: 'Booster catch was called off: B22 splashed down in the Gulf about 6.5 min after the 4:47 PM CST liftoff. Ship catch is still planned at this Pad 2 tower, T+22:32:34 from that liftoff. Checkpoints near T+7h15m and T+20h41m can end in a splashdown instead. Deorbit burn is about T+21:36. Pad 1 is under reconstruction.'
+    complete: true,
+    // Ship 42 caught by the Pad 2 chopsticks about 21:20 UTC Sat Nov 14 (3:20 PM CST), after 14 orbits.
+    // B22: boostback ended early on a low-fuel-mass alarm; destroyed just above the Gulf, not a clean splashdown.
+    status: 'Complete · Ship 42 caught at the Pad 2 tower · booster lost offshore',
+    shipCatchOffsetSec: 22 * 3600 + 32 * 60 + 34, // T+22:32:34 from the 22:47 UTC liftoff, about 21:20 UTC
+    catchNote: 'Flight 15 is complete. Ship 42 was caught by the Pad 2 tower chopsticks at about 3:20 PM CST on Sat Nov 14, after 14 orbits. The first Starship upper-stage catch. Booster B22 was lost: boostback ended early on a low-fuel-mass alarm, it diverted offshore, and it was destroyed just above the water in the Gulf about 6.5 min after liftoff. The root cause is under investigation. Pad 1 is under reconstruction.'
   };
 
   // Places. kind: 'target' (things to look at) or 'site' (where you stand).
   var PLACES = {
     pad:   { id: 'pad',   name: 'Launch mount (Pad 2)', short: 'MOUNT', lat: 25.996603, lon: -97.158251, heightM: 0, src: 'll2' },
     tower: { id: 'tower', name: 'Catch tower (Pad 2)',  short: 'TOWER', lat: 25.99705,  lon: -97.15807,  heightM: 144.5, src: 'osm',
-             note: 'Ship catch is still planned at this tower. The booster catch was called off. It stands about 50 m north of the mount. Position traced from OpenStreetMap, good to a few tens of metres.' },
+             note: 'Ship 42 was caught by these chopsticks on Sat Nov 14. The booster did not return here. The tower stands about 50 m north of the mount. Position traced from OpenStreetMap, good to a few tens of metres.' },
     outpost:    { id: 'outpost',    name: 'Rocket Ranch Outpost (launch viewing)', lat: 25.96159,   lon: -97.20539,   src: 'visit' },
     campground: { id: 'campground', name: 'Rocket Ranch Campground (check-in)',    lat: 25.947229,  lon: -97.279813,  src: 'camp' },
     portisabel: { id: 'portisabel', name: 'Port Isabel (town centre)',             lat: 26.0734119, lon: -97.2085844, src: 'nominatim' }
@@ -80,17 +84,17 @@
     { id: 'hotstage', t: 141, anchor: 'launch', phase: 'Ascent & booster return', label: 'Hot staging', kind: 'spacex', big: true,
       see: 'Ship engines light while still attached to the booster. With clear skies you may see a flash and the two stages split. Binoculars help.' },
     { id: 'bb', t: 146, anchor: 'launch', phase: 'Ascent & booster return', label: 'Boostback burn start', kind: 'spacex',
-      see: 'The booster flips and fires back toward Starbase. If liftoff slips past sunset, a sunlit plume against a darker sky is possible.' },
+      see: 'The booster flipped back toward Starbase, then the burn ended early.' },
     { id: 'bbend', t: 182, anchor: 'launch', phase: 'Ascent & booster return', label: 'Boostback burn shutdown', kind: 'spacex',
-      see: 'The tower catch was later called off. The booster went to the Gulf, not the Pad 2 tower.' },
+      see: 'Ended early on a low-fuel-mass alarm. SpaceX says the root cause is still under investigation. Guidance then aborted the tower catch.' },
     { id: 'boom_b', t: 345, anchor: 'launch', phase: 'Ascent & booster return', label: 'Sonic booms possible (booster return)', kind: 'estimate', aborted: true,
       see: 'Does not apply. The booster did not return to the tower.' },
     { id: 'blb', t: 370, anchor: 'launch', phase: 'Ascent & booster return', label: 'Booster landing burn at the tower', kind: 'spacex', big: true, aborted: true,
       see: 'Called off. There was no landing burn into the Pad 2 tower.' },
-    { id: 'bcatch', t: 390, anchor: 'launch', phase: 'Ascent & booster return', label: 'BOOSTER SPLASHDOWN', kind: 'estimate', big: true,
-      see: 'Tower catch called off. Super Heavy B22 made a controlled splashdown in the Gulf of Mexico about 6.5 min after launch. SpaceX: "Super Heavy has diverted to an offshore splashdown in the Gulf."' },
+    { id: 'bcatch', t: 390, anchor: 'launch', phase: 'Ascent & booster return', label: 'BOOSTER LOST', kind: 'estimate', big: true,
+      see: 'Tower catch aborted. B22 diverted offshore and was destroyed just above the water in the Gulf about 6.5 min after liftoff, not a clean splashdown. SpaceX: boostback ended early on a low-fuel-mass alarm.' },
     { id: 'snd_bcatch', t: 370, anchor: 'launch', soundFrom: 'tower', phase: 'Ascent & booster return', label: 'Landing-burn sound at the tower', kind: 'computed', aborted: true,
-      see: 'No tower landing-burn roar. The booster splashed down offshore.' },
+      see: 'No tower landing-burn roar. The booster was lost offshore.' },
     { id: 'seco', t: 489, anchor: 'launch', phase: 'Ship to orbit', label: 'Starship engine cutoff', kind: 'spacex', webcast: true,
       see: 'The ship is far downrange. Follow it on the webcast.' },
     { id: 'oib', t: 1570, anchor: 'launch', phase: 'Ship to orbit', label: 'Orbital insertion burn start', kind: 'spacex', webcast: true, see: '' },
@@ -98,16 +102,16 @@
     { id: 'pd', t: 2101, anchor: 'launch', phase: 'On orbit', label: 'Payload deploy start', kind: 'spacex', webcast: true, see: '26 Starlink V3 satellites.' },
     { id: 'pdend', t: 4660, anchor: 'launch', phase: 'On orbit', label: 'Payload deploy complete', kind: 'spacex', webcast: true, see: '' },
     { id: 'hi1', t: 5266, anchor: 'launch', phase: 'On orbit', label: 'Early Hawaii return check', kind: 'spacex', webcast: true, see: 'First chance to bring the ship down early over the ocean.' },
-    { id: 'chile', t: 26135, anchor: 'launch', phase: 'On orbit', label: 'Mid Chile return check', kind: 'spacex', webcast: true, see: 'Contingency checkpoint near T+7h15m. A no-go can end in an ocean splashdown instead of the tower catch.' },
-    { id: 'hi2', t: 74515, anchor: 'launch', phase: 'On orbit', label: 'Final Hawaii return check', kind: 'spacex', webcast: true, see: 'Last contingency checkpoint, near T+20h41m, before the planned deorbit. A no-go means a splashdown.' },
+    { id: 'chile', t: 26135, anchor: 'launch', phase: 'On orbit', label: 'Mid Chile return check', kind: 'spacex', webcast: true, see: 'Contingency checkpoint near T+7h15m. The team stayed GO. Ship 42 came home to the tower.' },
+    { id: 'hi2', t: 74515, anchor: 'launch', phase: 'On orbit', label: 'Final Hawaii return check', kind: 'spacex', webcast: true, see: 'Last contingency checkpoint, near T+20h41m. Teams polled GO for the Pad 2 catch.' },
 
     // Ship return: SpaceX times expressed relative to catch (T+22:32:34) so they move with the ship-catch clock.
-    { id: 'deorbit', t: 77757 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Deorbit burn start', kind: 'spacex', webcast: true, see: 'About T+21:36, if the team is still GO for the Pad 2 tower.' },
+    { id: 'deorbit', t: 77757 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Deorbit burn start', kind: 'spacex', webcast: true, see: 'About T+21:36. The burn flew, and Ship 42 was on the way to the Pad 2 tower.' },
     { id: 'deorbitend', t: 77767 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Deorbit burn shutdown', kind: 'spacex', webcast: true, see: '' },
     { id: 'entry', t: 79846 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Starship entry', kind: 'spacex', webcast: true,
       see: 'Plasma views on the webcast. SpaceX describes a glide toward Starbase from the Pacific side. The exact ground track is not published here.' },
-    { id: 'boom_s', t: 80954 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Sonic boom possible (ship return)', kind: 'estimate', alert: true,
-      see: 'Ship is slowing through the speed of sound near Starbase. A boom is possible around now. Timing is an estimate.' },
+    { id: 'boom_s', t: 80954 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Sonic boom possible (ship return)', kind: 'estimate',
+      see: 'Ship slowed through the speed of sound near Starbase on the way to the catch. Timing was an estimate.' },
     { id: 'transonic', t: 80974 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Starship transonic', kind: 'spacex',
       see: 'Scan the sky above and around the tower for a falling dot, belly first.' },
     { id: 'subsonic', t: 81013 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Starship subsonic', kind: 'spacex', see: '' },
@@ -118,9 +122,9 @@
     { id: 's32', t: 81146 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Landing burn 3 → 2 engines', kind: 'spacex', minor: true, see: '' },
     { id: 's21', t: 81153 - 81154, anchor: 'ship', phase: 'Ship return & catch', label: 'Landing burn 2 → 1 engine', kind: 'spacex', minor: true, see: '' },
     { id: 'scatch', t: 0, anchor: 'ship', phase: 'Ship return & catch', label: 'SHIP CATCH', kind: 'spacex', big: true,
-      see: 'Still the plan: catch at the Pad 2 tower. The booster catch was called off. A no-go on the way home means a splashdown instead.' },
-    { id: 'snd_scatch', t: 81136 - 81154, anchor: 'ship', soundFrom: 'tower', phase: 'Ship return & catch', label: 'Ship landing-burn sound arrives', kind: 'computed', alert: true,
-      see: 'The roar of the ship landing burn arrives after you see it.' }
+      see: 'Caught. The Pad 2 tower chopsticks caught Ship 42 at about 3:20 PM CST, after 14 orbits. The first Starship upper-stage catch.' },
+    { id: 'snd_scatch', t: 81136 - 81154, anchor: 'ship', soundFrom: 'tower', phase: 'Ship return & catch', label: 'Ship landing-burn sound arrives', kind: 'computed',
+      see: 'The roar of the ship landing burn arrived after the catch was visible. The catch is complete, so this is no longer an alert.' }
   ];
 
   root.SB_DATA = { SOURCES: SOURCES, MISSION: MISSION, PLACES: PLACES, EVENTS: EVENTS };
