@@ -193,6 +193,8 @@ Then open `http://127.0.0.1:8765/` for the hub and `http://127.0.0.1:8765/?mode=
 
 After one visit on https (or localhost), the service worker keeps a copy for offline use. Weather still needs a network the first time, then shows the last reading.
 
+Cloudflare Workers Builds deploys the repo as static assets (`wrangler.jsonc`). Pushes to `main` run `npx wrangler deploy`. Other branches run `npx wrangler preview`, which needs the empty `previews` block in that file.
+
 **Install it to the home screen:**
 
 - **iPhone (Safari):** Share → *Add to Home Screen*
