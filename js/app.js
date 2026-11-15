@@ -541,6 +541,20 @@
       groups[v.role].push(v);
     });
     function serialNum(v) { var m = /(\d+)/.exec(v.serial || ''); return m ? +m[1] : -1; }
+    function silhouette(role) {
+      var svg = role === 'ship'
+        ? '<svg viewBox="0 0 80 120" aria-hidden="true"><path fill="currentColor" d="M40 4l10 26 6 48-8 28H32l-8-28-6-48z"/><path fill="currentColor" d="M8 58l18-6v16zM72 58L54 52v16z"/></svg>'
+        : '<svg viewBox="0 0 80 120" aria-hidden="true"><path fill="currentColor" d="M28 16h24v78H28z"/><path fill="currentColor" d="M8 24h20v8H8zM52 24h20v8H52z"/><path fill="currentColor" d="M31 94h6v14h-6zM37 94h6v16h-6zM43 94h6v14h-6z"/></svg>';
+      return '<figure class="vphoto ph">' + svg + '<figcaption class="credit">No licensed photo of this vehicle yet.</figcaption></figure>';
+    }
+    function vehiclePhoto(v) {
+      var src = String(v.image || '');
+      var href = safeUrl(v.imageSourceUrl);
+      if (!/^assets\/vehicles\/[A-Za-z0-9._-]+$/.test(src) || !href) return silhouette(v.role);
+      var line = esc(v.imageCredit || 'Photo') + (v.imageLicense ? ' · ' + esc(v.imageLicense) : '');
+      return '<figure class="vphoto"><img src="' + esc(src) + '" alt="' + esc(v.name || v.serial) + '" width="800" loading="lazy" decoding="async">' +
+        '<figcaption class="credit"><a href="' + esc(href) + '" target="_blank" rel="noopener">' + line + '</a></figcaption></figure>';
+    }
     function cards(list) {
       list.sort(function (a, b) { return serialNum(b) - serialNum(a); });
       return list.map(function (v) {
@@ -549,7 +563,7 @@
           return url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(s.name || 'Source') + '</a>' : esc(s && s.name || '');
         }).filter(Boolean).join(' · ');
         var flightsTxt = (v.flights || []).length ? 'Flight ' + v.flights.join(', ') : '';
-        return '<article class="card"><div class="row"><h3>' + esc(v.serial) + '</h3><span class="pill">' + esc(v.status || '—') + '</span></div>' +
+        return '<article class="card">' + vehiclePhoto(v) + '<div class="row"><h3>' + esc(v.serial) + '</h3><span class="pill">' + esc(v.status || '—') + '</span></div>' +
           '<div class="note">' + esc([v.name, v.block, flightsTxt].filter(Boolean).join(' · ')) + '</div>' +
           (v.summary ? '<p class="sum">' + esc(v.summary) + '</p>' : '') +
           (links ? '<div class="src">' + links + '</div>' : '') + '</article>';

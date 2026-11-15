@@ -1,7 +1,8 @@
 /* Offline support: cache the app shell, keep the last weather response. */
-var VERSION = 'sbla-v7';
+var VERSION = 'sbla-v8';
 var SHELL = ['./', 'index.html', 'css/style.css', 'js/data.js', 'js/geo.js', 'js/flights.js', 'js/app.js', 'manifest.webmanifest',
   'data/news.json', 'data/vehicles.json', 'data/ll2-fallback.json', 'data/missions/index.json', 'data/missions/flight-15.json',
+  'assets/vehicles/b7.webp', 'assets/vehicles/b12.webp', 'assets/vehicles/s24.webp', 'assets/vehicles/s39.webp', 'assets/vehicles/ift2-b9-s25.webp',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {

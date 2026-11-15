@@ -136,8 +136,28 @@ Hand-edited. The app only reads it.
 | `flights` | no | Array of flight numbers. |
 | `summary` | no | One or two sentences. |
 | `updated` | no | Date you last edited the file. |
+| `image` | no | Repo path such as `assets/vehicles/b12.webp`. Only `assets/vehicles/` files are shown. |
+| `imageCredit` | no | Photographer or rights holder, shown under the photo. |
+| `imageLicense` | no | Short license name, such as `CC BY-SA 2.0` or `Public domain`. |
+| `imageSourceUrl` | no | `https` page for the original photo. The credit line links here. |
+
+Leave `image` off when you do not have a photo whose caption names that serial and whose license allows reuse here with credit. The card then shows a steel booster or ship silhouette. Do not point `image` at a hotlinked URL.
 
 The page sorts each group by serial number, highest first. The seeded list is flown vehicles only, cited to the [list of Starship launches](https://en.wikipedia.org/wiki/List_of_Starship_launches) for Flights 1–14 and to [SpaceX's Flight 15 page](https://www.spacex.com/launches/starship-flight-15) for B22 and S42. Add vehicles still in the yard when you have a source.
+
+## Image credits
+
+Photographs in `assets/vehicles/` are not covered by the MIT license. Each copy is offered under the same license as the original. They are resized WebP files, about 800 px wide, for this unofficial non-commercial fan site.
+
+| Vehicle | What the caption identifies | Credit | License | Source |
+| --- | --- | --- | --- | --- |
+| B7 | Super Heavy booster, serial no. B7, on the pad in February 2023 | Mobilus In Mobili | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:SpaceX_Starship_Superheavy_Testing_February_2023_(cropped).jpg) |
+| B9 and S25 | Flight 2 vehicles S25 and B9 during ascent | Osunpokeh | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Starship-IFT2-ascent_(close_cropped).jpg) |
+| B12 | The booster returning to the tower on flight test 5 (Booster 12) | Steve Jurvetson | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Starship_Booster_Return_on_Final_Approach_(54063904149).jpg) |
+| S24 | The Booster 7 / Ship 24 stack, 16 April 2023 | Jenny Hautmann | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Full_Stack_starship_crop_straight.jpg) |
+| S39 | Heat shield of Ship 39 inside Megabay 2 | Alexander Kubitza, U.S. Navy | Public domain (U.S. government work) | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ship_39_in_Megabay_2,_Starbase,_Texas_(cropped).jpg) |
+
+The other flown vehicles in the seed file have no photo here. Commons and similar collections did not have a picture whose caption named that serial and whose license allows this use. Those cards use the silhouette.
 
 ## `data/news.json`
 

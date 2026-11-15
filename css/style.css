@@ -151,6 +151,14 @@ input,select{font:inherit;font-size:16px;color:var(--fg);background:#0b0d0e;bord
 .card .sum{margin:8px 0 0;color:var(--dim);font-size:13px;line-height:1.45}
 .card .src{margin-top:8px;font-size:12px}
 .card .src a{color:var(--steel)}
+.vphoto{margin:0 0 12px;background:linear-gradient(165deg,#171c20,#090b0c);border:1px solid #3a4248;border-radius:2px;overflow:hidden}
+.vphoto img{display:block;width:100%;height:220px;object-fit:contain;background:#090b0c}
+.vphoto.ph{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:168px;color:#c5ced6;background:
+  repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 1px,transparent 1px 5px),
+  linear-gradient(165deg,#1c2227,#0b0d0f)}
+.vphoto.ph svg{width:64px;height:96px;filter:drop-shadow(0 0 1px rgba(255,255,255,.45))}
+.vphoto .credit{margin:0;padding:7px 8px 8px;font-size:11px;line-height:1.35;color:var(--dim)}
+.vphoto .credit a{color:var(--steel)}
 .group-label{margin:16px 0 8px;font-size:10px;letter-spacing:.28em;color:var(--dim)}
 .desc{color:var(--dim);font-size:14px;line-height:1.45}
 .foot{padding:20px 16px 40px;font-size:13px;line-height:1.5;color:var(--dim)}
