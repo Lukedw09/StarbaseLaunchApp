@@ -1,6 +1,8 @@
 /* Offline support: cache the app shell, keep the last weather response. */
-var VERSION = 'sbla-v6';
-var SHELL = ['./', 'index.html', 'css/style.css', 'js/data.js', 'js/geo.js', 'js/app.js', 'manifest.webmanifest',
+var VERSION = 'sbla-v8';
+var SHELL = ['./', 'index.html', 'css/style.css', 'js/data.js', 'js/geo.js', 'js/flights.js', 'js/app.js', 'manifest.webmanifest',
+  'data/news.json', 'data/vehicles.json', 'data/ll2-fallback.json', 'data/missions/index.json', 'data/missions/flight-15.json',
+  'assets/vehicles/b7.webp', 'assets/vehicles/b12.webp', 'assets/vehicles/s24.webp', 'assets/vehicles/s39.webp', 'assets/vehicles/ift2-b9-s25.webp',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
@@ -23,6 +25,15 @@ self.addEventListener('fetch', function (e) {
     return;
   }
   if (url.origin !== location.origin) return;
+  if (url.pathname.indexOf('/data/') !== -1) {
+    e.respondWith(fetch(req).then(function (res) {
+      if (res.ok) { var copy = res.clone(); caches.open(VERSION).then(function (c) { c.put(req, copy); }); }
+      return res;
+    }).catch(function () {
+      return caches.open(VERSION).then(function (c) { return c.match(req); }).then(function (r) { return r || Response.error(); });
+    }));
+    return;
+  }
   // App shell: cache first, refresh the cache in the background.
   e.respondWith(caches.open(VERSION).then(function (c) {
     return c.match(req, { ignoreSearch: true }).then(function (hit) {

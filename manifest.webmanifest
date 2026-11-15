@@ -1,7 +1,7 @@
 {
-  "name": "StarbaseLaunchApp: Flight 15 launch-day companion",
-  "short_name": "Launch Day",
-  "description": "Unofficial fan app: Starship Flight 15 countdown, timeline, where to look, sound alerts and weather.",
+  "name": "StarbaseLaunchApp",
+  "short_name": "Starbase",
+  "description": "Unofficial fan app for Starship at Starbase: next flight, history, vehicles, a viewing guide, and a launch-day companion.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

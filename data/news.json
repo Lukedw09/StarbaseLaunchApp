@@ -1,0 +1,18 @@
+{
+  "items": [
+    {
+      "date": "2026-11-14",
+      "title": "Ship 42 caught at the Pad 2 tower",
+      "summary": "SpaceX says Starship lifted off from Starbase on November 13 and, the next day, the tower arms caught the ship for the first time. The booster catch was aborted after boostback ended early.",
+      "sourceUrl": "https://www.spacex.com/launches/starship-flight-15",
+      "sourceName": "SpaceX"
+    },
+    {
+      "date": "2026-11-13",
+      "title": "Flight 15 lifts off from Pad 2",
+      "summary": "Spaceflight Now reported liftoff at 4:47 p.m. CST, a booster divert offshore, and Ship 42 returning the next afternoon for the tower catch.",
+      "sourceUrl": "https://spaceflightnow.com/2026/11/13/live-coverage-starship-flight-15-attempts-to-recover-full-vehicle-in-double-launch-pad-catch/",
+      "sourceName": "Spaceflight Now"
+    }
+  ]
+}

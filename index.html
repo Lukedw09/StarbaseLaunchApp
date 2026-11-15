@@ -3,17 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>StarbaseLaunchApp · Starship Flight 15 launch-day companion</title>
-<meta name="description" content="Unofficial fan-made launch-day companion for Starship Flight 15 at Starbase, TX: countdown, event timeline, where to look, sound-arrival alerts and live weather. Works offline.">
-<meta name="theme-color" content="#000000">
+<title>StarbaseLaunchApp · Starship</title>
+<meta name="description" content="Unofficial fan app for Starship at Starbase: next flight, flight history, vehicles, a viewing guide, and a launch-day companion when a flight is close.">
+<meta name="theme-color" content="#050607">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Launch Day">
+<meta name="apple-mobile-web-app-title" content="Starbase">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.dataset.mode=/[?&]mode=launch(?:&|$)/.test(location.search)?'launch':'hub';</script>
 </head>
 <body>
 <div id="flash" class="flash" hidden><div class="flash-inner"><div id="flashTitle" class="flash-title"></div><div id="flashSub" class="flash-sub"></div><button id="flashClose" class="btn">Dismiss</button></div></div>
@@ -21,17 +22,101 @@
 <header class="head">
   <div class="topbar">
     <div class="brand">STARBASE<span class="thin">LAUNCH</span></div>
-    <div class="topright"><span id="netStatus" class="pill">ONLINE</span><span class="pill fan">UNOFFICIAL FAN APP</span></div>
+    <div class="topright"><span id="modePill" class="pill">HUB</span><span id="netStatus" class="pill">ONLINE</span><span class="pill">UNOFFICIAL</span></div>
   </div>
+  <div id="previewBar" class="preview" hidden><span>Launch-day preview</span><a id="exitPreview" href="./">Back to the hub</a></div>
   <nav class="tabs" id="tabs">
-    <a href="#count" class="active">COUNT</a><a href="#timeline">TIMELINE</a><a href="#look">LOOK</a><a href="#alerts">SOUND</a><a href="#wx">WEATHER</a><a href="#ship">SHIP CATCH</a>
+    <a href="#next" class="active">NEXT</a><a href="#history">FLIGHTS</a><a href="#vehicles">VEHICLES</a><a href="#look">GUIDE</a><a href="#news">NEWS</a>
   </nav>
 </header>
 
 <main>
-  <!-- COUNTDOWN -->
-  <section id="count" class="panel hero">
-    <div class="mission"><span id="missionName">STARSHIP FLIGHT 15</span> <span class="dim" id="missionVeh"></span></div>
+  <section id="next" class="panel hub-only">
+    <h2>NEXT FLIGHT</h2>
+    <div class="mission"><span id="nextName">Loading the flight list…</span> <span class="dim" id="nextVeh"></span></div>
+    <div class="status" id="nextStatus"></div>
+    <div id="hubCoarse" class="coarse" hidden>
+      <div class="coarse-k">NO EARLIER THAN</div>
+      <div class="coarse-v" id="hubCoarseVal">—</div>
+    </div>
+    <div class="clock" id="hubClock" hidden>
+      <span class="t" id="hubT">T−</span>
+      <span class="grp"><span class="num" id="hubD">00</span><span class="lab">DAYS</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="hubH">00</span><span class="lab">HRS</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="hubM">00</span><span class="lab">MIN</span></span><span class="sep">:</span>
+      <span class="grp"><span class="num" id="hubS">00</span><span class="lab">SEC</span></span>
+    </div>
+    <p class="desc" id="nextDesc"></p>
+    <h3>TIMELINE</h3>
+    <p class="note" id="nextNote"></p>
+    <ol id="nextList" class="events"></ol>
+  </section>
+
+  <section id="history" class="panel hub-only">
+    <h2>FLIGHT HISTORY</h2>
+    <p class="note" id="listSource">Every integrated Starship flight. Dates are Central Time when the time is known to the day or better.</p>
+    <div id="historyList"></div>
+  </section>
+
+  <section id="vehicles" class="panel hub-only">
+    <h2>VEHICLES</h2>
+    <p class="note">Boosters and ships from the hand-maintained vehicle file. This list is not filled in from the launch database.</p>
+    <div id="vehicleList"></div>
+  </section>
+
+  <section id="look" class="panel">
+    <h2 id="lookTitle">VIEWING GUIDE</h2>
+    <p class="note hub-only" id="guideIntro">Outpost, campground, and Port Isabel. Pick a spot or use live GPS. The compass and the sound delay point at the Pad 2 catch tower or the launch mount.</p>
+    <div class="callout" id="youBox">
+      <div class="k">YOUR LOCATION</div>
+      <div class="v" id="locSource">Live GPS</div>
+      <div class="meta" id="locMeta">Waiting for a fix…</div>
+    </div>
+    <div class="seg" id="siteSeg">
+      <button data-site="gps" class="on">LIVE GPS</button><button data-site="outpost">OUTPOST</button><button data-site="campground">CAMPGROUND</button><button data-site="portisabel">PORT ISABEL</button>
+    </div>
+    <p class="note" id="siteTip"></p>
+    <div class="callout" id="targetBox">
+      <div class="k">TARGET</div>
+      <div class="v" id="targetName">Catch tower (Pad 2)</div>
+      <div class="meta" id="targetExplain">Compass points from your location to the target.</div>
+    </div>
+    <div class="seg small" id="targetSeg"><button data-target="tower" class="on">CATCH TOWER</button><button data-target="pad">LAUNCH MOUNT</button></div>
+    <p class="note" id="targetHelp">Mount = where Starship sits and lifts off. Tower = where the booster and ship are caught.</p>
+    <p class="note launch-only" id="catchNote"></p>
+    <div class="compasswrap">
+      <div class="dial" id="dial">
+        <div class="rose" id="rose">
+          <span class="cn n">N</span><span class="cn e">E</span><span class="cn s">S</span><span class="cn w">W</span>
+          <div class="ticks"></div>
+          <div class="sunwrap" id="sunMark"><div class="sun" title="Sun">☀</div></div>
+          <div class="arrow" id="arrow"><div class="head"></div><div class="shaft"></div></div>
+        </div>
+        <div class="heading-ind"></div>
+      </div>
+      <div class="turn" id="turnHint">—</div>
+    </div>
+    <div class="btnrow"><button class="btn primary" id="compassBtn">ENABLE COMPASS</button></div>
+    <div class="note" id="compassInfo">No compass yet. The dial shows north at the top. Tap Enable Compass to turn it with your phone.</div>
+    <div class="grid4">
+      <div><div class="k">BEARING</div><div class="v big" id="brg">—</div></div>
+      <div><div class="k">DISTANCE</div><div class="v big" id="dist">—</div></div>
+      <div><div class="k">SOUND DELAY</div><div class="v big" id="delay">—</div></div>
+      <div><div class="k">TOWER TOP</div><div class="v big" id="elev">—</div></div>
+    </div>
+    <div class="note" id="sunInfo"></div>
+    <table class="tbl" id="targetsTbl"><thead><tr><th>TARGET</th><th>BEARING</th><th>DIST</th><th>SOUND</th></tr></thead><tbody></tbody></table>
+    <p class="note" id="towerNote"></p>
+  </section>
+
+  <section id="news" class="panel hub-only">
+    <h2>NEWS</h2>
+    <p class="note">Updates from the news file. Newest first.</p>
+    <div id="newsList"></div>
+  </section>
+
+  <section id="count" class="panel hero launch-only">
+    <div class="mission"><span id="missionName">STARSHIP</span> <span class="dim" id="missionVeh"></span></div>
     <div class="status" id="launchStatus"></div>
     <div class="clock" id="mainClock" aria-live="off">
       <span class="t" id="clkT">T−</span>
@@ -65,60 +150,14 @@
     </form>
   </section>
 
-  <!-- TIMELINE -->
-  <section id="timeline" class="panel">
+  <section id="timeline" class="panel launch-only">
     <h2>EVENT TIMELINE</h2>
-    <p class="note">Times from SpaceX's Flight 15 timeline ("all times approximate"). <span class="tag computed">COMPUTED</span> rows use your distance. <span class="tag est">ESTIMATE</span> rows are not from SpaceX. Ship-return rows follow the ship-catch clock.</p>
+    <p class="note" id="timelineNote"></p>
     <label class="check"><input type="checkbox" id="showMinor"> Show minor countdown steps</label>
     <ol id="eventList" class="events"></ol>
   </section>
 
-  <!-- WHERE TO LOOK -->
-  <section id="look" class="panel">
-    <h2>WHERE TO LOOK</h2>
-    <div class="callout" id="youBox">
-      <div class="k">YOUR LOCATION</div>
-      <div class="v" id="locSource">Live GPS</div>
-      <div class="meta" id="locMeta">Waiting for a fix…</div>
-    </div>
-    <div class="seg" id="siteSeg">
-      <button data-site="gps" class="on">LIVE GPS</button><button data-site="outpost">OUTPOST</button><button data-site="campground">CAMPGROUND</button><button data-site="portisabel">PORT ISABEL</button>
-    </div>
-    <div class="callout" id="targetBox">
-      <div class="k">TARGET</div>
-      <div class="v" id="targetName">Catch tower (Pad 2)</div>
-      <div class="meta" id="targetExplain">Compass points from your location to the target.</div>
-    </div>
-    <div class="seg small" id="targetSeg"><button data-target="tower" class="on">CATCH TOWER</button><button data-target="pad">LAUNCH MOUNT</button></div>
-    <p class="note" id="targetHelp">Mount = where Starship sits and lifts off. Tower = where the booster and ship are caught.</p>
-    <p class="note" id="catchNote"></p>
-    <div class="compasswrap">
-      <div class="dial" id="dial">
-        <div class="rose" id="rose">
-          <span class="cn n">N</span><span class="cn e">E</span><span class="cn s">S</span><span class="cn w">W</span>
-          <div class="ticks"></div>
-          <div class="sunwrap" id="sunMark"><div class="sun" title="Sun">☀</div></div>
-          <div class="arrow" id="arrow"><div class="head"></div><div class="shaft"></div></div>
-        </div>
-        <div class="heading-ind"></div>
-      </div>
-      <div class="turn" id="turnHint">—</div>
-    </div>
-    <div class="btnrow"><button class="btn primary" id="compassBtn">ENABLE COMPASS</button></div>
-    <div class="note" id="compassInfo">No compass yet. The dial shows north at the top. Tap Enable Compass to turn it with your phone.</div>
-    <div class="grid4">
-      <div><div class="k">BEARING</div><div class="v big" id="brg">—</div></div>
-      <div><div class="k">DISTANCE</div><div class="v big" id="dist">—</div></div>
-      <div><div class="k">SOUND DELAY</div><div class="v big" id="delay">—</div></div>
-      <div><div class="k">TOWER TOP</div><div class="v big" id="elev">—</div></div>
-    </div>
-    <div class="note" id="sunInfo"></div>
-    <table class="tbl" id="targetsTbl"><thead><tr><th>TARGET</th><th>BEARING</th><th>DIST</th><th>SOUND</th></tr></thead><tbody></tbody></table>
-    <p class="note" id="towerNote"></p>
-  </section>
-
-  <!-- SOUND ALERTS -->
-  <section id="alerts" class="panel">
+  <section id="alerts" class="panel launch-only">
     <h2>SOUND ARRIVAL</h2>
     <p class="note">Light reaches you right away. Sound travels at about <b id="cNow">343 m/s</b>, so you see the rocket before you hear it. Alerts flash the screen, beep, speak, and vibrate where the phone supports it.</p>
     <div class="seg" id="soundAlertSeg">
@@ -136,8 +175,7 @@
     <ul id="alertList" class="alertlist"></ul>
   </section>
 
-  <!-- WEATHER -->
-  <section id="wx" class="panel">
+  <section id="wx" class="panel launch-only">
     <h2>WEATHER AT STARBASE</h2>
     <div class="note" id="wxStatus">Loading…</div>
     <div class="grid4">
@@ -156,8 +194,7 @@
     <p class="note">Data: Open-Meteo, at the Pad 2 coordinates. This is not SpaceX's launch weather call.</p>
   </section>
 
-  <!-- SHIP CATCH -->
-  <section id="ship" class="panel">
+  <section id="ship" class="panel launch-only">
     <h2>SHIP CATCH</h2>
     <div class="status" id="shipStatus"></div>
     <div class="clock small" id="shipClock">
@@ -167,16 +204,19 @@
       <span class="grp"><span class="num" id="sM">00</span><span class="lab">MIN</span></span><span class="sep">:</span>
       <span class="grp"><span class="num" id="sS">00</span><span class="lab">SEC</span></span>
     </div>
+    <p class="note" id="shipEmpty" hidden>This flight's mission file has no ship-catch time.</p>
     <div class="readouts">
       <div><div class="k" id="shipWhenLabel">CATCH (EST.)</div><div class="v" id="shipLocal">—</div></div>
       <div><div class="k">MISSION ELAPSED</div><div class="v" id="met">—</div></div>
     </div>
-    <label class="check"><input type="checkbox" id="shipFollow" checked> Follow launch time (T+22:32:34 from the 4:47 PM CST liftoff)</label>
-    <form id="shipForm" class="editform" hidden>
-      <label>Ship catch time (Central Time) <input type="datetime-local" id="shipInput" step="1"></label>
-      <div class="btnrow"><button class="btn primary" type="submit">SET</button></div>
-    </form>
-    <p class="note">Ship 42 was caught. SpaceX only attempts the catch when the ship is healthy; otherwise it comes down in the ocean.</p>
+    <div id="shipControls">
+      <label class="check"><input type="checkbox" id="shipFollow" checked> <span id="shipFollowText">Follow launch time</span></label>
+      <form id="shipForm" class="editform" hidden>
+        <label>Ship catch time (Central Time) <input type="datetime-local" id="shipInput" step="1"></label>
+        <div class="btnrow"><button class="btn primary" type="submit">SET</button></div>
+      </form>
+    </div>
+    <p class="note">SpaceX only attempts a tower catch when the ship is healthy. Otherwise it comes down in the ocean.</p>
     <p class="note" id="shipPadNote"></p>
   </section>
 
@@ -189,6 +229,7 @@
 
 <script src="js/data.js"></script>
 <script src="js/geo.js"></script>
+<script src="js/flights.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
