@@ -1,0 +1,507 @@
+{
+  "id": "flight-15",
+  "flightNumber": 15,
+  "ll2Id": "0f867f0c-5422-4d44-93b8-d7faaae7019b",
+  "slug": "starship-starlink-group-31-2-starship-flight-15",
+  "archived": true,
+  "name": "Starship Flight 15",
+  "vehicles": "Super Heavy B22 · Ship S42",
+  "pad": "Orbital Launch Pad 2 · Starbase, TX",
+  "net": "2026-11-13T22:47:00Z",
+  "netPrecision": "SEC",
+  "windowMinutes": 75,
+  "launched": true,
+  "complete": true,
+  "status": "Complete · Ship 42 caught at the Pad 2 tower · booster lost offshore",
+  "outcome": "Launch success. Ship 42 caught by the Pad 2 tower chopsticks at about 3:20 p.m. CST on Nov 14, the first Starship upper-stage catch. Booster B22 was lost offshore: boostback ended early on a low-fuel-mass alarm, and the flight termination system fired after the landing burn.",
+  "shipCatchOffsetSec": 81154,
+  "catchNote": "Flight 15 is complete. Ship 42 was caught by the Pad 2 tower chopsticks at about 3:20 PM CST on Sat Nov 14, after 14 orbits. The first Starship upper-stage catch. Booster B22 was lost: boostback ended early on a low-fuel-mass alarm, it diverted offshore, and it was destroyed just above the water in the Gulf about 6.5 min after liftoff. The root cause is under investigation. Pad 1 is under reconstruction.",
+  "events": [
+    {
+      "id": "poll",
+      "t": -3000,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "GO for propellant load",
+      "kind": "spacex",
+      "see": "Flight director poll. Venting usually starts soon after: white vapour clouds around the stack."
+    },
+    {
+      "id": "blox",
+      "t": -2133,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Booster LOX load underway",
+      "kind": "spacex",
+      "see": "Frost and vapour spread over the booster as it fills with super-cold propellant."
+    },
+    {
+      "id": "bch4",
+      "t": -2130,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Booster fuel (methane) load underway",
+      "kind": "spacex",
+      "minor": true,
+      "see": ""
+    },
+    {
+      "id": "slox",
+      "t": -2112,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Ship LOX load underway",
+      "kind": "spacex",
+      "minor": true,
+      "see": ""
+    },
+    {
+      "id": "sch4",
+      "t": -2111,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Ship fuel load underway",
+      "kind": "spacex",
+      "minor": true,
+      "see": "Both stages are now loading. Venting from the ship too."
+    },
+    {
+      "id": "chill",
+      "t": -1300,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Raptor engine chill (booster + ship)",
+      "kind": "spacex",
+      "see": "More venting around the engine section at the bottom of the booster."
+    },
+    {
+      "id": "bdone",
+      "t": -170,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Booster propellant load complete",
+      "kind": "spacex",
+      "see": "Earplugs in now."
+    },
+    {
+      "id": "sdone",
+      "t": -130,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Ship propellant load complete",
+      "kind": "spacex",
+      "see": ""
+    },
+    {
+      "id": "go",
+      "t": -30,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Flight director verifies GO for launch",
+      "kind": "spacex",
+      "see": "Last 30 seconds. Eyes on the pad."
+    },
+    {
+      "id": "deluge",
+      "t": -17,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Flame diverter activation",
+      "kind": "spacex",
+      "see": "Water starts flowing through the flame diverter under the mount. You may see spray at the base."
+    },
+    {
+      "id": "start",
+      "t": -3,
+      "anchor": "launch",
+      "phase": "Countdown",
+      "label": "Booster engine startup",
+      "kind": "spacex",
+      "see": "A bright flash and a billowing cloud at the base. No sound yet."
+    },
+    {
+      "id": "liftoff",
+      "t": 0,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "LIFTOFF",
+      "kind": "spacex",
+      "big": true,
+      "see": "The rocket climbs in silence at first. The sound is still on its way to you."
+    },
+    {
+      "id": "snd_liftoff",
+      "t": 0,
+      "anchor": "launch",
+      "soundFrom": "pad",
+      "phase": "Ascent & booster return",
+      "label": "Liftoff sound arrives",
+      "kind": "computed",
+      "alert": true,
+      "see": "A deep, crackling roar arrives and keeps rolling for a minute or more. You may feel it in your chest."
+    },
+    {
+      "id": "maxq",
+      "t": 58,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "Max Q",
+      "kind": "spacex",
+      "see": "Peak aerodynamic stress. The rocket is climbing out over the Gulf to the east."
+    },
+    {
+      "id": "meco",
+      "t": 139,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "Super Heavy MECO",
+      "kind": "spacex",
+      "see": "Most booster engines shut down. It is now a bright point high in the east."
+    },
+    {
+      "id": "hotstage",
+      "t": 141,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "Hot staging",
+      "kind": "spacex",
+      "big": true,
+      "see": "Ship engines light while still attached to the booster. With clear skies you may see a flash and the two stages split. Binoculars help."
+    },
+    {
+      "id": "bb",
+      "t": 146,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "Boostback burn start",
+      "kind": "spacex",
+      "see": "The booster flipped back toward Starbase, then the burn ended early."
+    },
+    {
+      "id": "bbend",
+      "t": 182,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "Boostback burn shutdown",
+      "kind": "spacex",
+      "see": "Ended early on a low-fuel-mass alarm. SpaceX says the root cause is still under investigation. Guidance then aborted the tower catch."
+    },
+    {
+      "id": "boom_b",
+      "t": 345,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "Sonic booms possible (booster return)",
+      "kind": "estimate",
+      "aborted": true,
+      "see": "Does not apply. The booster did not return to the tower."
+    },
+    {
+      "id": "blb",
+      "t": 370,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "Booster landing burn at the tower",
+      "kind": "spacex",
+      "big": true,
+      "aborted": true,
+      "see": "Called off. There was no landing burn into the Pad 2 tower."
+    },
+    {
+      "id": "bcatch",
+      "t": 390,
+      "anchor": "launch",
+      "phase": "Ascent & booster return",
+      "label": "BOOSTER LOST",
+      "kind": "estimate",
+      "big": true,
+      "see": "Tower catch aborted. B22 diverted offshore and was destroyed just above the water in the Gulf about 6.5 min after liftoff, not a clean splashdown. SpaceX: boostback ended early on a low-fuel-mass alarm."
+    },
+    {
+      "id": "snd_bcatch",
+      "t": 370,
+      "anchor": "launch",
+      "soundFrom": "tower",
+      "phase": "Ascent & booster return",
+      "label": "Landing-burn sound at the tower",
+      "kind": "computed",
+      "aborted": true,
+      "see": "No tower landing-burn roar. The booster was lost offshore."
+    },
+    {
+      "id": "seco",
+      "t": 489,
+      "anchor": "launch",
+      "phase": "Ship to orbit",
+      "label": "Starship engine cutoff",
+      "kind": "spacex",
+      "webcast": true,
+      "see": "The ship is far downrange. Follow it on the webcast."
+    },
+    {
+      "id": "oib",
+      "t": 1570,
+      "anchor": "launch",
+      "phase": "Ship to orbit",
+      "label": "Orbital insertion burn start",
+      "kind": "spacex",
+      "webcast": true,
+      "see": ""
+    },
+    {
+      "id": "oibend",
+      "t": 1590,
+      "anchor": "launch",
+      "phase": "Ship to orbit",
+      "label": "Orbital insertion burn shutdown",
+      "kind": "spacex",
+      "webcast": true,
+      "see": "Ship in orbit at about 275 km, then deploying 26 Starlink V3."
+    },
+    {
+      "id": "pd",
+      "t": 2101,
+      "anchor": "launch",
+      "phase": "On orbit",
+      "label": "Payload deploy start",
+      "kind": "spacex",
+      "webcast": true,
+      "see": "26 Starlink V3 satellites."
+    },
+    {
+      "id": "pdend",
+      "t": 4660,
+      "anchor": "launch",
+      "phase": "On orbit",
+      "label": "Payload deploy complete",
+      "kind": "spacex",
+      "webcast": true,
+      "see": ""
+    },
+    {
+      "id": "hi1",
+      "t": 5266,
+      "anchor": "launch",
+      "phase": "On orbit",
+      "label": "Early Hawaii return check",
+      "kind": "spacex",
+      "webcast": true,
+      "see": "First chance to bring the ship down early over the ocean."
+    },
+    {
+      "id": "chile",
+      "t": 26135,
+      "anchor": "launch",
+      "phase": "On orbit",
+      "label": "Mid Chile return check",
+      "kind": "spacex",
+      "webcast": true,
+      "see": "Contingency checkpoint near T+7h15m. The team stayed GO. Ship 42 came home to the tower."
+    },
+    {
+      "id": "hi2",
+      "t": 74515,
+      "anchor": "launch",
+      "phase": "On orbit",
+      "label": "Final Hawaii return check",
+      "kind": "spacex",
+      "webcast": true,
+      "see": "Last contingency checkpoint, near T+20h41m. Teams polled GO for the Pad 2 catch."
+    },
+    {
+      "id": "deorbit",
+      "t": -3397,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Deorbit burn start",
+      "kind": "spacex",
+      "webcast": true,
+      "see": "About T+21:36. The burn flew, and Ship 42 was on the way to the Pad 2 tower."
+    },
+    {
+      "id": "deorbitend",
+      "t": -3387,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Deorbit burn shutdown",
+      "kind": "spacex",
+      "webcast": true,
+      "see": ""
+    },
+    {
+      "id": "entry",
+      "t": -1308,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Starship entry",
+      "kind": "spacex",
+      "webcast": true,
+      "see": "Plasma views on the webcast. SpaceX describes a glide toward Starbase from the Pacific side. The exact ground track is not published here."
+    },
+    {
+      "id": "boom_s",
+      "t": -200,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Sonic boom possible (ship return)",
+      "kind": "estimate",
+      "see": "Ship slowed through the speed of sound near Starbase on the way to the catch. Timing was an estimate."
+    },
+    {
+      "id": "transonic",
+      "t": -180,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Starship transonic",
+      "kind": "spacex",
+      "see": "Scan the sky above and around the tower for a falling dot, belly first."
+    },
+    {
+      "id": "subsonic",
+      "t": -141,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Starship subsonic",
+      "kind": "spacex",
+      "see": ""
+    },
+    {
+      "id": "slb",
+      "t": -18,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Ship landing burn start",
+      "kind": "spacex",
+      "big": true,
+      "see": "Engines light just above the tower."
+    },
+    {
+      "id": "flip",
+      "t": -16,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Landing flip",
+      "kind": "spacex",
+      "big": true,
+      "see": "The ship swings from belly-first to upright. This is the big moment to watch."
+    },
+    {
+      "id": "s32",
+      "t": -8,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Landing burn 3 → 2 engines",
+      "kind": "spacex",
+      "minor": true,
+      "see": ""
+    },
+    {
+      "id": "s21",
+      "t": -1,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "Landing burn 2 → 1 engine",
+      "kind": "spacex",
+      "minor": true,
+      "see": ""
+    },
+    {
+      "id": "scatch",
+      "t": 0,
+      "anchor": "ship",
+      "phase": "Ship return & catch",
+      "label": "SHIP CATCH",
+      "kind": "spacex",
+      "big": true,
+      "see": "Caught. The Pad 2 tower chopsticks caught Ship 42 at about 3:20 PM CST, after 14 orbits. The first Starship upper-stage catch."
+    },
+    {
+      "id": "snd_scatch",
+      "t": -18,
+      "anchor": "ship",
+      "soundFrom": "tower",
+      "phase": "Ship return & catch",
+      "label": "Ship landing-burn sound arrives",
+      "kind": "computed",
+      "see": "The roar of the ship landing burn arrived after the catch was visible. The catch is complete, so this is no longer an alert."
+    }
+  ],
+  "sources": {
+    "spacex": {
+      "name": "SpaceX Flight 15 mission page (timeline \"All Times Approximate\")",
+      "url": "https://www.spacex.com/launches/starship-flight-15"
+    },
+    "ll2": {
+      "name": "Launch Library 2: Orbital Launch Pad 2 (pad 235)",
+      "url": "https://ll.thespacedevs.com/2.2.0/pad/235/"
+    },
+    "osm": {
+      "name": "Pad 2 tower position, OSM-traced (Starship Catch Simulator site notes)",
+      "url": "https://dionismuzenitov.github.io/starship-catch-sim/docs/kb/starbase-catch-site-pad-a-b-dimensions-and-catch-history"
+    },
+    "visit": {
+      "name": "Visit Starbase: Rocket Ranch Boca Chica viewing spot",
+      "url": "https://visit-starbase.com/watch/rocket-ranch"
+    },
+    "rr": {
+      "name": "Rocket Ranch FAQ",
+      "url": "https://rocketranchstarbase.com/faq/"
+    },
+    "camp": {
+      "name": "Campendium: Rocket Ranch Boca Chica",
+      "url": "https://maps.campendium.com/us/brownsville-tx/camping-rv/rocket-ranch-boca-chica"
+    },
+    "nominatim": {
+      "name": "OpenStreetMap Nominatim: Port Isabel, TX",
+      "url": "https://nominatim.openstreetmap.org/search?q=Port+Isabel,+Texas&format=json"
+    },
+    "krgv": {
+      "name": "KRGV: sonic booms possible during both returns",
+      "url": "https://www.krgv.com/news/spacex-sets-target-date-for-15th-starship-launch-at-starbase"
+    },
+    "meteo": {
+      "name": "Open-Meteo forecast API",
+      "url": "https://open-meteo.com/"
+    },
+    "catchUpd": {
+      "name": "SpaceX: first planned Starship catch, tower at Pad 2",
+      "url": "https://www.spacex.com/updates/starship-catch"
+    },
+    "flight11": {
+      "name": "SpaceX: Flight 11, final launch from the previous Pad 1 configuration",
+      "url": "https://www.spacex.com/launches/starship-flight-11"
+    },
+    "spacecom": {
+      "name": "Space.com live blog: FAA license granted for Flight 15, Nov 13 2026",
+      "url": "https://www.space.com/news/live/spacex-starship-flight-15-live-updates-nov-13-2026-starship-first-double-landing-attempt"
+    },
+    "spacecomFlight": {
+      "name": "Space.com: Flight 15 liftoff 22:47 UTC and booster catch abort",
+      "url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-starship-flight-15-chopsticks-double-catch-super-heavy-ship"
+    },
+    "nbc": {
+      "name": "NBC News: Flight 15 launch, booster recovery aborted",
+      "url": "https://www.nbcnews.com/science/space/spacex-launches-15th-starship-flight-aborts-booster-recovery-maneuver-rcna609274"
+    },
+    "krgvFlight": {
+      "name": "KRGV: booster diverted to the Gulf",
+      "url": "https://www.krgv.com/news/spacex-approved-for-starships-15th-test-flight-at-boca-chica/"
+    },
+    "spacexPost": {
+      "name": "SpaceX on X: Super Heavy has diverted to an offshore splashdown in the Gulf",
+      "url": "https://x.com/SpaceX"
+    },
+    "spacecomCatch": {
+      "name": "Space.com live blog, Nov 14 2026: Ship 42 caught; booster lost on low-fuel-mass alarm",
+      "url": "https://www.space.com/news/live/spacex-starship-flight-15-live-updates-nov-14-2026-starship-first-double-landing-attempt"
+    },
+    "cnbc": {
+      "name": "CNBC: first catch of a Starship upper stage from orbit",
+      "url": "https://www.cnbc.com/2026/11/14/spacex-plans-to-try-first-ever-catch-of-starship-rocket-from-orbit.html"
+    },
+    "bbc": {
+      "name": "BBC live: SpaceX catches Ship 42 on its return",
+      "url": "https://www.bbc.com/news/live/cq0k683l3dz3t"
+    }
+  }
+}

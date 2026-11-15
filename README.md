@@ -1,102 +1,210 @@
 # StarbaseLaunchApp
 
-**A launch-day companion for Starship Flight 15 at Starbase, Texas.** Keep it open on your phone at the viewing site. It runs the countdown, shows each flight event as it happens, points you at the tower, and warns you a few seconds before the roar reaches you.
+**An unofficial Starship hub for Starbase, Texas.** Between flights it is a phone-friendly info page: the next flight, every Starship flight so far, a hand-kept vehicle list, a viewing guide, and news. From 48 hours before a real T−0 until 6 hours after liftoff it switches to the launch-day companion (countdown, timeline, where to look, sound, weather, ship catch).
 
 > **Unofficial fan app.** It isn't affiliated with or endorsed by SpaceX or Rocket Ranch. All times are approximate and change often, so always go by official SpaceX updates and on-site staff.
 
-![StarbaseLaunchApp on a phone: countdown, where to look, sound alerts](docs/screenshot.png)
+The name and the site stay the same. There is no specs or math page.
 
-## What's on the screen
+## Hub
 
-The tabs at the top jump between six sections.
+The tabs at the top, in normal mode:
 
-### Count
-A big **T−** clock counts down to liftoff and turns into a green **T+** clock after launch. Times are shown in **Central Time (CST)**, the local time at Starbase.
+### Next
+A countdown to the next Starship flight, in **Central Time**, plus that flight's timeline.
 
-- The orange line under the mission name tells you whether the time is still **NET** ("no earlier than") and unconfirmed, or a time you set yourself.
-- **CURRENT / NEXT** show the latest event and how long until the next one.
-- Launch times move all the time, so you can adjust it yourself:
-  - **HOLD** freezes the clock, just like a hold in the real count. **RESUME COUNT** picks up again, and everything after it shifts back by the length of the hold.
-  - **+1 / +5 / +15 MIN** handle a quick slip.
-  - **EDIT T−0** lets you type the exact new liftoff time in Central Time. **RESET TO SPACEX TARGET** puts back the published window-open time.
+If Launch Library 2 only has a month, quarter, or year (a placeholder, not a clock time), the page shows **NET June 2027** style text and does not count down to midnight on the last day of that period. The timeline appears once a real T−0 exists.
 
-Your settings are saved on the phone, so they stay put if you close the page.
+### Flights
+Every integrated Starship flight from Launch Library 2: date, vehicles, and outcome. Newest first. A mission file in this repo replaces any field it sets.
 
-### Timeline
-Every event from SpaceX's published Flight 15 timeline, from the GO for propellant load at T−50 minutes through the booster catch at about T+6:35 and the ship catch the next day. Each row shows its T-time, the clock time, and **what you'll actually see or hear from the ground**. The current event is highlighted as the clock runs.
+### Vehicles
+Boosters and ships from [`data/vehicles.json`](data/vehicles.json) only. The app does not invent this list from Launch Library 2.
 
-Some rows carry tags:
+### Guide
+The same spots as the launch-day Look tab: live GPS, **Rocket Ranch Outpost**, **Rocket Ranch Campground**, and **Port Isabel**. Compass to the Pad 2 catch tower or the launch mount, plus bearing, distance, sound delay, and a short tip for each preset.
 
-| Tag | Meaning |
+### News
+Items from [`data/news.json`](data/news.json), newest first. An outside routine can replace that file. If it is empty, the page says there are no updates yet.
+
+## Launch-day mode
+
+The companion opens on its own when the current time is inside this window for a flight whose T−0 is known to the **day or better** (second, minute, hour, or day):
+
+- opens **48 hours before** T−0
+- closes **6 hours after** liftoff
+
+Month, quarter, and year placeholders do not open it.
+
+The tabs are the original companion: **Count**, **Timeline**, **Look**, **Sound**, **Weather**, and **Ship catch**. HOLD, +1 / +5 / +15, EDIT T−0, and reset to the published T−0 still work, and those edits stay on the phone, per flight. Editing T−0 on the phone does not move the 48-hour window. The window uses the merged flight time (Launch Library 2, then the mission file).
+
+To preview the companion when a flight is not in that window, open `?mode=launch`. To force the hub even inside the window, open `?mode=hub`.
+
+Flight 15 is the first mission file, [`data/missions/flight-15.json`](data/missions/flight-15.json). It is archived. Its SpaceX timeline, including the **COMPUTED** and **ESTIMATE** rows, is kept there and wins over Launch Library 2.
+
+## Where the flight list comes from
+
+The page asks [Launch Library 2](https://thespacedevs.com/) (The Space Devs, free tier) in the browser for previous and upcoming launches whose rocket is named Starship:
+
+- `https://ll.thespacedevs.com/2.2.0/launch/previous/?rocket__configuration__name=Starship`
+- `https://ll.thespacedevs.com/2.2.0/launch/upcoming/?rocket__configuration__name=Starship`
+
+A trimmed copy is saved in `localStorage` under `sbla.ll2.v1` and reused for **one hour**, so a phone does not hit the rate limit on every open. If the request fails, the page uses that saved copy, or [`data/ll2-fallback.json`](data/ll2-fallback.json) if nothing is saved. It does not show an error.
+
+## Mission files
+
+`data/missions/index.json` lists the files to load:
+
+```json
+{ "files": ["flight-15.json"] }
+```
+
+Each file is one flight. Matching to a Launch Library 2 launch, in order: `ll2Id`, then `slug`, then `flightNumber`. A file that matches none of them is added as its own flight, which is how you can list a flight before LL2 does.
+
+**Any key you set replaces the LL2 value, including `null` and `""`.** Keys you leave out keep the LL2 value. If you set `events`, that array replaces the whole LL2 timeline.
+
+| Field | Meaning |
 | --- | --- |
-| *(none)* | From SpaceX's timeline. SpaceX marks these "all times approximate." |
-| `COMPUTED` | Worked out from your own distance to the pad, like when the sound arrives. |
-| `ESTIMATE` | Not from SpaceX, such as when sonic booms might be heard. Treat these as rough guides. |
-| `WEBCAST` | Happening too far away to see. Follow along on the SpaceX webcast. |
+| `id` | Stable id. Phone settings for T−0 are stored under this. |
+| `flightNumber` | 1, 2, 3… Used to match LL2 names like "Flight 15". |
+| `ll2Id` | Launch Library 2 launch UUID. |
+| `slug` | LL2 slug, another way to match. |
+| `archived` | `true` once the flight is over and the file is the record. |
+| `name`, `vehicles`, `pad` | What the countdown and the history row show. |
+| `net` | T−0 as an ISO UTC timestamp. |
+| `netPrecision` | `SEC`, `MIN`, `HR`, or `D` for a real clock time. `M`, `Q`, or `Y` stay on the hub. |
+| `windowMinutes` | Length of the launch window after T−0. |
+| `launched`, `complete` | Banner state for the companion. |
+| `status` | Status line on the countdown when this file is in charge. |
+| `outcome` | One line on the history card. |
+| `shipCatchOffsetSec` | Seconds from liftoff to the ship catch. Omit it to hide that clock. |
+| `catchNote` | Shown on Look and Ship catch during launch day. |
+| `events` | Timeline rows. Replaces LL2 when present. |
+| `sources` | Map of `{ "name": "...", "url": "https://..." }` cited in the footer. |
 
-Tick **Show minor countdown steps** to see every propellant-loading call.
+An event row:
 
-### Look
-Shows where to point your eyes.
+| Field | Meaning |
+| --- | --- |
+| `id` | Stable id. |
+| `t` | Seconds from the anchor. Negative is before. |
+| `anchor` | `launch` (from T−0) or `ship` (from the ship-catch time). |
+| `phase` | Group label, such as `Countdown`. |
+| `label` | Row title. |
+| `kind` | `spacex`, `computed`, `estimate`, or `ll2`. |
+| `see` | What you should see or hear from the ground. |
+| `minor` | Hidden until "Show minor countdown steps" is on. |
+| `big` | Heavier type, for liftoff and catches. |
+| `alert` | Arms a sound-arrival alert. |
+| `soundFrom` | `pad` or `tower`. The row's clock time adds your sound delay. |
+| `aborted` | Draws the row as called off. |
+| `webcast` | Tags the row as webcast-only. |
 
-- **LIVE GPS** uses your phone's location, so distances are right wherever you're standing. If GPS isn't available, pick a preset: the **Rocket Ranch Outpost** (the launch viewing site), the **Rocket Ranch Campground**, or **Port Isabel**.
-- Choose the **CATCH TOWER** or the **LAUNCH MOUNT** as your target. They're about 50 m apart.
-- The arrow on the dial points to the target. Tap **ENABLE COMPASS** (iPhone will ask for permission) and the dial turns with your phone, telling you **TURN LEFT / TURN RIGHT** until you're **ON TARGET**. Without a compass, north stays at the top and you can line up using the bearing.
-- The readouts show the **bearing**, the **straight-line distance**, the **sound delay**, and how high the top of the tower sits above the horizon. From the Outpost the tower is only about 1.3° up, so look low.
-- The sun's position (☀ on the dial) gives you a quick reference if your compass is acting up.
+After adding a file, list it in `data/missions/index.json` and in the `SHELL` array in `sw.js` so it is available offline.
 
-From the Rocket Ranch Outpost, the tower is about **050° (northeast), 6.2 km / 3.8 mi away**, and the sound takes about **18 seconds** to reach you.
+## `data/vehicles.json`
 
-### Sound
-At this distance you **see** liftoff long before you **hear** it. The app works out when the sound reaches you:
+Hand-edited. The app only reads it.
 
-**delay = distance ÷ speed of sound**
+```json
+{
+  "updated": "2026-11-15",
+  "vehicles": [
+    {
+      "id": "B22",
+      "role": "booster",
+      "serial": "B22",
+      "name": "Super Heavy Booster 22",
+      "block": "Block 3",
+      "status": "Destroyed",
+      "flights": [15],
+      "summary": "One or two sentences.",
+      "sources": [{ "name": "SpaceX — Starship Flight 15", "url": "https://www.spacex.com/launches/starship-flight-15" }]
+    }
+  ]
+}
+```
 
-The speed of sound comes from the live air temperature, roughly 343 m/s at 20 °C (68 °F), and is nudged by the wind blowing along the path. You can switch to a manual temperature if you like.
-
-Tap **ARM ALERTS** once. At each sound moment (the liftoff roar, possible booster sonic booms, the landing-burn roar, and the same again for the ship catch), the app flashes the whole screen, sounds a tone, reads the event aloud, and vibrates. For the computed sound arrivals it also gives three short beeps just before. Tap **TEST ALERT** to try it out.
-
-- **iPhone:** Safari doesn't support vibration from websites, so you'll get the flash, tone, and voice. Turn the volume up.
-- Keep the page open and the screen unlocked. The app asks the phone to keep the screen awake where it can.
-
-### Weather
-Live conditions at the pad from [Open-Meteo](https://open-meteo.com/): temperature, wind speed and direction, gusts, cloud cover, visibility, humidity, and sunset time. There's also a forecast for the launch time and the ship-catch time. If you lose signal, it shows the last reading and marks it **CACHED**. This is regular weather data, not SpaceX's launch weather call.
-
-### Ship catch
-A second countdown for the ship's return the next day. By default it's **T−0 + 22:32:34**, from SpaceX's timeline, and it moves with the launch clock. Untick **Follow launch time** to set it yourself. SpaceX will only bring the ship back to the tower if it's healthy. Otherwise it comes down in the ocean, so this is a planned catch, not a sure thing.
-
-## Works without signal
-
-Cell service near Starbase gets patchy, and big crowds make it worse. After you open the site once online, your phone keeps a copy and the app runs fully offline. The countdown, timeline, compass, GPS, and alerts all keep working, and weather shows the last reading.
-
-**Install it to your home screen** for a full-screen app:
-- **iPhone (Safari):** Share → *Add to Home Screen*
-- **Android (Chrome):** ⋮ menu → *Add to Home screen* / *Install app*
-
-## Where the numbers come from
-
-| What | Value used | Source |
+| Field | Required | Meaning |
 | --- | --- | --- |
-| Launch window | Fri Nov 13, 2026, opens 4:45 PM CST (22:45 UTC), 75 minutes long. NET, pending FAA approval | [SpaceX Flight 15 page](https://www.spacex.com/launches/starship-flight-15) |
-| Flight timeline | SpaceX's published Flight 15 countdown and flight timeline | [SpaceX Flight 15 page](https://www.spacex.com/launches/starship-flight-15) |
-| Launch mount, Pad 2 | 25.996603° N, 97.158251° W | [Launch Library 2](https://ll.thespacedevs.com/2.2.0/pad/235/) |
-| Catch tower, Pad 2 | 25.99705° N, 97.15807° W (traced from OpenStreetMap, ±tens of m), about 144.5 m tall | [Starship Catch Simulator site notes](https://dionismuzenitov.github.io/starship-catch-sim/docs/kb/starbase-catch-site-pad-a-b-dimensions-and-catch-history) |
-| Rocket Ranch Outpost | 25.96159° N, 97.20539° W (about 3.8 mi from the pad; Rocket Ranch says ≈3.7 mi) | [Visit Starbase](https://visit-starbase.com/watch/rocket-ranch), [Rocket Ranch FAQ](https://rocketranchstarbase.com/faq/) |
-| Rocket Ranch Campground | 25.947229° N, 97.279813° W (43742 Palmito Hill Rd) | [Campendium](https://maps.campendium.com/us/brownsville-tx/camping-rv/rocket-ranch-boca-chica) |
-| Port Isabel | 26.07341° N, 97.20858° W (town centre) | [OpenStreetMap](https://www.openstreetmap.org/relation/114514) |
-| Sonic booms | Possible during both returns. Exact timing not published, so the app's times are estimates | [KRGV](https://www.krgv.com/news/spacex-sets-target-date-for-15th-starship-launch-at-starbase) |
+| `id` | yes | Stable id. |
+| `role` | yes | `booster` or `ship`. Anything else is skipped. |
+| `serial` | yes | Shown as the card title, such as `B22` or `S42`. |
+| `status` | yes | Short status, such as `Caught`, `Expended`, or `Destroyed`. |
+| `sources` | yes | At least one `{ "name", "url" }`. Cite the page you used. |
+| `name`, `block` | no | Subtitle. |
+| `flights` | no | Array of flight numbers. |
+| `summary` | no | One or two sentences. |
+| `updated` | no | Date you last edited the file. |
 
-## How it works
+The page sorts each group by serial number, highest first. The seeded list is flown vehicles only, cited to the [list of Starship launches](https://en.wikipedia.org/wiki/List_of_Starship_launches) for Flights 1–14 and to [SpaceX's Flight 15 page](https://www.spacex.com/launches/starship-flight-15) for B22 and S42. Add vehicles still in the yard when you have a source.
 
-- **Distance and bearing** use the great-circle (haversine) formula on a spherical Earth. Over 6 km this matches a full WGS-84 ellipsoid calculation to within about 3 m and 0.2°.
-- **Speed of sound** is 331.3 × √(1 + T/273.15) m/s, with T in °C, plus the wind component along the path from the pad to you.
-- **Tower elevation** accounts for Earth's curvature and normal atmospheric refraction.
-- **Compass** reads the phone's orientation sensor: `webkitCompassHeading` on iPhone, absolute device orientation on Android. Phone compasses can be off by several degrees, especially near cars or metal, so wave the phone in a figure-8 to recalibrate.
-- Everything runs in your browser. Nothing is sent anywhere except the weather request to Open-Meteo. Your location never leaves your phone.
+## `data/news.json`
 
-## Using it on a computer
+An outside routine can rewrite this file from SpaceX's updates page and @SpaceX on X. The page only renders it, newest first.
 
-Open `index.html` in a browser, or visit the hosted site. Offline mode needs the hosted (https) version.
+```json
+{
+  "items": [
+    {
+      "date": "2026-11-14",
+      "title": "Ship 42 caught at the Pad 2 tower",
+      "summary": "One short paragraph.",
+      "sourceUrl": "https://www.spacex.com/launches/starship-flight-15",
+      "sourceName": "SpaceX"
+    }
+  ]
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `date` | `YYYY-MM-DD`. Sort key. |
+| `title` | Card title. |
+| `summary` | Short paragraph. Optional. |
+| `sourceUrl` | `http` or `https` link. Other schemes are dropped. |
+| `sourceName` | Link text, such as `SpaceX`. |
+
+An empty `items` array shows "No updates yet."
+
+## Viewing spots
+
+| Place | Coordinates | Source |
+| --- | --- | --- |
+| Launch mount, Pad 2 | 25.996603° N, 97.158251° W | [Launch Library 2 pad 235](https://ll.thespacedevs.com/2.2.0/pad/235/) |
+| Catch tower, Pad 2 | 25.99705° N, 97.15807° W, about 144.5 m tall | [Starship Catch Simulator site notes](https://dionismuzenitov.github.io/starship-catch-sim/docs/kb/starbase-catch-site-pad-a-b-dimensions-and-catch-history) |
+| Rocket Ranch Outpost | 25.96159° N, 97.20539° W | [Visit Starbase](https://visit-starbase.com/watch/rocket-ranch), [Rocket Ranch FAQ](https://rocketranchstarbase.com/faq/) |
+| Rocket Ranch Campground | 25.947229° N, 97.279813° W | [Campendium](https://maps.campendium.com/us/brownsville-tx/camping-rv/rocket-ranch-boca-chica) |
+| Port Isabel | 26.07341° N, 97.20858° W | [OpenStreetMap](https://www.openstreetmap.org/relation/114514) |
+
+From the Outpost the tower is about **050° (northeast), 6.2 km / 3.8 mi**, and the sound takes about **18 seconds**.
+
+Distance and bearing use the great-circle formula. Sound speed is `331.3 × √(1 + T/273.15)` m/s, plus the wind along the path. Tower elevation includes Earth curvature and typical refraction. The compass uses `webkitCompassHeading` on iPhone and absolute device orientation on Android.
+
+## Run it locally
+
+Static files. A local server is required so the mission, vehicle, and news files can load:
+
+```bash
+python3 -m http.server 8765
+```
+
+Then open `http://127.0.0.1:8765/` for the hub and `http://127.0.0.1:8765/?mode=launch` for the launch-day preview.
+
+After one visit on https (or localhost), the service worker keeps a copy for offline use. Weather still needs a network the first time, then shows the last reading.
+
+**Install it to the home screen:**
+
+- **iPhone (Safari):** Share → *Add to Home Screen*
+- **Android (Chrome):** menu → *Add to Home screen* / *Install app*
+
+## Tests
+
+```bash
+node --test test/flights.test.js
+```
+
+or `npm test`. They cover the 48-hour / 6-hour window, coarse dates staying on the hub, and mission-file fields overriding Launch Library 2 (including the archived Flight 15 timeline).
 
 ## License
 
