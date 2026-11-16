@@ -1,45 +1,71 @@
-/* Offline support: cache the app shell, keep the last weather response. */
-var VERSION = 'sbla-v8';
-var SHELL = ['./', 'index.html', 'css/style.css', 'js/data.js', 'js/geo.js', 'js/flights.js', 'js/app.js', 'manifest.webmanifest',
-  'data/news.json', 'data/vehicles.json', 'data/ll2-fallback.json', 'data/missions/index.json', 'data/missions/flight-15.json',
-  'assets/vehicles/b7.webp', 'assets/vehicles/b12.webp', 'assets/vehicles/s24.webp', 'assets/vehicles/s39.webp', 'assets/vehicles/ift2-b9-s25.webp',
-  'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png'];
+/* Starship service worker.
+ * Precaches the app shell, then prefers the network so a deploy is not stuck
+ * behind the previous copy. Offline, the cached shell still opens.
+ * data/*.json is network-first. Launch Library 2 is left to the page, which
+ * keeps its own localStorage copy and the bundled fallback.
+ * Bump CACHE in js/pwa.js when the shell changes.
+ */
+importScripts('/js/pwa.js');
+var P = self.SBPwa;
 
-self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(SHELL); }).then(function () { return self.skipWaiting(); }));
+self.addEventListener('install', function (event) {
+  event.waitUntil(caches.open(P.CACHE).then(function (cache) {
+    return cache.addAll(P.SHELL);
+  }).then(function () { return self.skipWaiting(); }));
 });
-self.addEventListener('activate', function (e) {
-  e.waitUntil(caches.keys().then(function (keys) {
-    return Promise.all(keys.filter(function (k) { return k !== VERSION && k !== 'sbla-wx'; }).map(function (k) { return caches.delete(k); }));
+
+self.addEventListener('activate', function (event) {
+  event.waitUntil(caches.keys().then(function (keys) {
+    return Promise.all(P.cachesToDelete(keys).map(function (key) { return caches.delete(key); }));
   }).then(function () { return self.clients.claim(); }));
 });
-self.addEventListener('fetch', function (e) {
-  var req = e.request;
-  if (req.method !== 'GET') return;
-  var url = new URL(req.url);
-  if (url.hostname === 'api.open-meteo.com') {
-    // Network first, fall back to the last good weather.
-    e.respondWith(fetch(req).then(function (res) {
-      var copy = res.clone(); caches.open('sbla-wx').then(function (c) { c.put('wx-latest', copy); }); return res;
-    }).catch(function () { return caches.open('sbla-wx').then(function (c) { return c.match('wx-latest'); }).then(function (r) { return r || Response.error(); }); }));
-    return;
-  }
-  if (url.origin !== location.origin) return;
-  if (url.pathname.indexOf('/data/') !== -1) {
-    e.respondWith(fetch(req).then(function (res) {
-      if (res.ok) { var copy = res.clone(); caches.open(VERSION).then(function (c) { c.put(req, copy); }); }
-      return res;
-    }).catch(function () {
-      return caches.open(VERSION).then(function (c) { return c.match(req); }).then(function (r) { return r || Response.error(); });
-    }));
-    return;
-  }
-  // App shell: cache first, refresh the cache in the background.
-  e.respondWith(caches.open(VERSION).then(function (c) {
-    return c.match(req, { ignoreSearch: true }).then(function (hit) {
-      var net = fetch(req).then(function (res) { if (res.ok) c.put(req, res.clone()); return res; }).catch(function () { return null; });
-      if (hit) { e.waitUntil(net); return hit; }
-      return net.then(function (res) { return res || (req.mode === 'navigate' ? c.match('index.html') : Response.error()); });
+
+function store(cacheName, key, response) {
+  return caches.open(cacheName).then(function (cache) { return cache.put(key, response.clone()); });
+}
+
+function stored(request) {
+  return new Request(self.location.origin + P.cachePath(request.url, self.location.origin));
+}
+
+function fromCache(request, shell) {
+  return caches.open(P.CACHE).then(function (cache) {
+    return cache.match(stored(request)).then(function (hit) {
+      if (hit) return hit;
+      if (!shell || request.mode !== 'navigate') return Response.error();
+      return cache.match('/').then(function (root) {
+        if (root) return root;
+        return cache.match('/index.html').then(function (index) { return index || Response.error(); });
+      });
     });
-  }));
+  });
+}
+
+function networkFirst(request, shell) {
+  return fetch(request).then(function (response) {
+    if (!response || !response.ok || response.type !== 'basic' || response.redirected) return response;
+    return store(P.CACHE, stored(request), response).then(function () { return response; }, function () { return response; });
+  }).catch(function () { return fromCache(request, shell); });
+}
+
+function networkWeather(request) {
+  var key = new Request(self.location.origin + '/wx-latest');
+  return fetch(request).then(function (response) {
+    if (!response || !response.ok) return response;
+    return store(P.WX_CACHE, key, response).then(function () { return response; });
+  }).catch(function () {
+    return caches.open(P.WX_CACHE).then(function (cache) {
+      return cache.match(key).then(function (hit) { return hit || Response.error(); });
+    });
+  });
+}
+
+self.addEventListener('fetch', function (event) {
+  var plan = P.handlePlan(event.request.url, self.location.origin, event.request.method);
+  if (plan === 'ignore') return;
+  if (plan === 'network-first-weather') {
+    event.respondWith(networkWeather(event.request));
+    return;
+  }
+  event.respondWith(networkFirst(event.request, plan === 'network-first-shell'));
 });

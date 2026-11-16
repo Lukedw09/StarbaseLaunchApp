@@ -87,6 +87,7 @@ h3{font-weight:400;font-size:11px;letter-spacing:.25em;margin:18px 0 8px;color:v
 .nowbar .v{font-size:13px;line-height:1.35}
 .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .btn{font:inherit;font-size:11px;letter-spacing:.16em;background:transparent;color:var(--fg);border:1px solid #8b969e;padding:10px 12px;border-radius:2px;cursor:pointer;min-height:40px}
+.install{font:inherit;font-size:9px;letter-spacing:.16em;color:#121416;background:linear-gradient(180deg,#f7f9fa,#c5ced6);border:0;border-radius:2px;padding:4px 8px;cursor:pointer}
 .btn:active{background:#15181b}
 .btn.primary{border-color:#d5dde3;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,0))}
 .btn.armed{border-color:#f4f7f8;color:#f4f7f8}

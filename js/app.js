@@ -769,10 +769,45 @@
     net();
   }
 
+  function standaloneApp() {
+    try {
+      return navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+    } catch (e) { return false; }
+  }
+  function bindInstall() {
+    var btn = $('installBtn');
+    var note = $('iosInstall');
+    var standalone = standaloneApp();
+    if (standalone && $('modePill')) {
+      var pill = document.createElement('span');
+      pill.className = 'pill';
+      pill.id = 'appPill';
+      pill.textContent = 'APP';
+      $('modePill').parentNode.insertBefore(pill, $('modePill'));
+    }
+    var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (ios && !standalone && note) note.hidden = false;
+    var deferred = null;
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      if (standalone) return;
+      deferred = e;
+      if (btn) btn.hidden = false;
+    });
+    if (btn) {
+      btn.onclick = function () {
+        if (!deferred) return;
+        deferred.prompt();
+        deferred.userChoice.then(function () { deferred = null; btn.hidden = true; });
+      };
+    }
+    window.addEventListener('appinstalled', function () { if (btn) btn.hidden = true; });
+  }
+
   function registerSW() {
     var ok = 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1');
     if (!ok) { $('swStatus').textContent = location.protocol === 'file:' ? 'Opened as a local file. Use a local web server so the flight list can load.' : ''; return; }
-    navigator.serviceWorker.register('sw.js').then(function () { return navigator.serviceWorker.ready; })
+    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(function () { return navigator.serviceWorker.ready; })
       .then(function () { $('swStatus').textContent = 'Saved for offline use. This page keeps working without signal.'; })
       .catch(function (e) { $('swStatus').textContent = 'Offline save unavailable: ' + e.message; });
   }
@@ -819,6 +854,7 @@
   }
 
   bind();
+  bindInstall();
   registerSW();
   startGps();
   renderLook();
