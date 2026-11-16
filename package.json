@@ -2,6 +2,6 @@
   "name": "starbaselaunchapp",
   "private": true,
   "scripts": {
-    "test": "node --test test/flights.test.js"
+    "test": "node --test test/flights.test.js test/pwa.test.js"
   }
 }

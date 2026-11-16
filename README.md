@@ -100,7 +100,7 @@ An event row:
 | `aborted` | Draws the row as called off. |
 | `webcast` | Tags the row as webcast-only. |
 
-After adding a file, list it in `data/missions/index.json` and in the `SHELL` array in `sw.js` so it is available offline.
+After adding a file, list it in `data/missions/index.json` and in the `SHELL` array in [`js/pwa.js`](js/pwa.js) so it is available offline. Bump `CACHE` in that file in the same change. The service worker deletes every cache except the current name, so an old shell cannot stay stuck after the new worker activates.
 
 ## `data/vehicles.json`
 
@@ -211,22 +211,24 @@ python3 -m http.server 8765
 
 Then open `http://127.0.0.1:8765/` for the hub and `http://127.0.0.1:8765/?mode=launch` for the launch-day preview.
 
-After one visit on https (or localhost), the service worker keeps a copy for offline use. Weather still needs a network the first time, then shows the last reading.
+After one visit on https (or localhost), the service worker keeps a copy of the app shell for offline use. News, vehicles, mission files, and the bundled flight list are fetched network-first, then fall back to that copy. Launch Library 2 is not stored by the worker. The page still keeps its one-hour `localStorage` copy and uses [`data/ll2-fallback.json`](data/ll2-fallback.json) when both the network and that copy are missing. Weather still needs a network the first time, then shows the last reading.
+
+The cache name is `CACHE` in [`js/pwa.js`](js/pwa.js). Bump it when the shell changes so the previous cache is deleted on activate.
 
 Cloudflare Workers Builds deploys the repo as static assets (`wrangler.jsonc`). Pushes to `main` run `npx wrangler deploy`. Other branches run `npx wrangler preview`, which needs the empty `previews` block in that file.
 
-**Install it to the home screen:**
+**Install it:** the manifest name is Starship, `start_url` is `/`, and display is standalone. The home-screen icon opens `/`, and the page still chooses hub or launch-day from the clock. `?mode=launch` and `?mode=hub` keep working from that icon because the worker serves the shell without dropping the query.
 
-- **iPhone (Safari):** Share → *Add to Home Screen*
-- **Android (Chrome):** menu → *Add to Home screen* / *Install app*
+- **Android (Chrome):** the Install button uses the browser install prompt. The menu item *Install app* / *Add to Home screen* does the same.
+- **iPhone (Safari):** Share → *Add to Home Screen*. The footer says so on iPhone and iPad. Open the Starship icon.
 
 ## Tests
 
 ```bash
-node --test test/flights.test.js
+npm test
 ```
 
-or `npm test`. They cover the 48-hour / 6-hour window, coarse dates staying on the hub, and mission-file fields overriding Launch Library 2 (including the archived Flight 15 timeline).
+They cover the 48-hour / 6-hour window, coarse dates staying on the hub, mission-file fields overriding Launch Library 2 (including the archived Flight 15 timeline), and the installable app: manifest, icons, and which requests the service worker caches.
 
 ## License
 

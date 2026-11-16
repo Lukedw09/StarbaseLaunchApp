@@ -9,10 +9,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Starbase">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Starship">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="stylesheet" href="css/style.css">
 <script>document.documentElement.dataset.mode=/[?&]mode=launch(?:&|$)/.test(location.search)?'launch':'hub';</script>
 </head>
@@ -22,7 +22,7 @@
 <header class="head">
   <div class="topbar">
     <div class="brand">STARBASE<span class="thin">LAUNCH</span></div>
-    <div class="topright"><span id="modePill" class="pill">HUB</span><span id="netStatus" class="pill">ONLINE</span><span class="pill">UNOFFICIAL</span></div>
+    <div class="topright"><button type="button" id="installBtn" class="install" hidden>INSTALL</button><span id="modePill" class="pill">HUB</span><span id="netStatus" class="pill">ONLINE</span><span class="pill">UNOFFICIAL</span></div>
   </div>
   <div id="previewBar" class="preview" hidden><span>Launch-day preview</span><a id="exitPreview" href="./">Back to the hub</a></div>
   <nav class="tabs" id="tabs">
@@ -223,6 +223,7 @@
   <footer class="foot">
     <p><b>Unofficial fan app.</b> Not affiliated with, endorsed by, or connected to SpaceX or Rocket Ranch. Times are approximate and change often. Follow official SpaceX updates and on-site staff.</p>
     <p id="srcList" class="note"></p>
+    <p class="note" id="iosInstall" hidden>On iPhone or iPad, tap Share, then Add to Home Screen. Open Starship from that icon.</p>
     <p class="note" id="swStatus"></p>
   </footer>
 </main>
